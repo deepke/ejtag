@@ -1,0 +1,1836 @@
+# 1 "/loongson/ejtag-debug/bin/lib/malloc.c"
+# 1 "/loongson/ejtag-debug/bin/lib//"
+# 1 "<built-in>"
+#define __STDC__ 1
+#define __STDC_HOSTED__ 1
+#define __GNUC__ 4
+#define __GNUC_MINOR__ 4
+#define __GNUC_PATCHLEVEL__ 0
+#define __SIZE_TYPE__ long unsigned int
+#define __PTRDIFF_TYPE__ long int
+#define __WCHAR_TYPE__ int
+#define __WINT_TYPE__ unsigned int
+#define __INTMAX_TYPE__ long int
+#define __UINTMAX_TYPE__ long unsigned int
+#define __CHAR16_TYPE__ short unsigned int
+#define __CHAR32_TYPE__ unsigned int
+#define __GXX_ABI_VERSION 1002
+#define __SCHAR_MAX__ 127
+#define __SHRT_MAX__ 32767
+#define __INT_MAX__ 2147483647
+#define __LONG_MAX__ 9223372036854775807L
+#define __LONG_LONG_MAX__ 9223372036854775807LL
+#define __WCHAR_MAX__ 2147483647
+#define __CHAR_BIT__ 8
+#define __INTMAX_MAX__ 9223372036854775807L
+#define __FLT_EVAL_METHOD__ 0
+#define __DEC_EVAL_METHOD__ 2
+#define __FLT_RADIX__ 2
+#define __FLT_MANT_DIG__ 24
+#define __FLT_DIG__ 6
+#define __FLT_MIN_EXP__ (-125)
+#define __FLT_MIN_10_EXP__ (-37)
+#define __FLT_MAX_EXP__ 128
+#define __FLT_MAX_10_EXP__ 38
+#define __FLT_MAX__ 3.40282347e+38F
+#define __FLT_MIN__ 1.17549435e-38F
+#define __FLT_EPSILON__ 1.19209290e-7F
+#define __FLT_DENORM_MIN__ 1.40129846e-45F
+#define __FLT_HAS_DENORM__ 1
+#define __FLT_HAS_INFINITY__ 1
+#define __FLT_HAS_QUIET_NAN__ 1
+#define __DBL_MANT_DIG__ 53
+#define __DBL_DIG__ 15
+#define __DBL_MIN_EXP__ (-1021)
+#define __DBL_MIN_10_EXP__ (-307)
+#define __DBL_MAX_EXP__ 1024
+#define __DBL_MAX_10_EXP__ 308
+#define __DBL_MAX__ 1.7976931348623157e+308
+#define __DBL_MIN__ 2.2250738585072014e-308
+#define __DBL_EPSILON__ 2.2204460492503131e-16
+#define __DBL_DENORM_MIN__ 4.9406564584124654e-324
+#define __DBL_HAS_DENORM__ 1
+#define __DBL_HAS_INFINITY__ 1
+#define __DBL_HAS_QUIET_NAN__ 1
+#define __LDBL_MANT_DIG__ 113
+#define __LDBL_DIG__ 33
+#define __LDBL_MIN_EXP__ (-16381)
+#define __LDBL_MIN_10_EXP__ (-4931)
+#define __LDBL_MAX_EXP__ 16384
+#define __LDBL_MAX_10_EXP__ 4932
+#define __DECIMAL_DIG__ 36
+#define __LDBL_MAX__ 1.18973149535723176508575932662800702e+4932L
+#define __LDBL_MIN__ 3.36210314311209350626267781732175260e-4932L
+#define __LDBL_EPSILON__ 1.92592994438723585305597794258492732e-34L
+#define __LDBL_DENORM_MIN__ 6.47517511943802511092443895822764655e-4966L
+#define __LDBL_HAS_DENORM__ 1
+#define __LDBL_HAS_INFINITY__ 1
+#define __LDBL_HAS_QUIET_NAN__ 1
+#define __DEC32_MANT_DIG__ 7
+#define __DEC32_MIN_EXP__ (-94)
+#define __DEC32_MAX_EXP__ 97
+#define __DEC32_MIN__ 1E-95DF
+#define __DEC32_MAX__ 9.999999E96DF
+#define __DEC32_EPSILON__ 1E-6DF
+#define __DEC32_SUBNORMAL_MIN__ 0.000001E-95DF
+#define __DEC64_MANT_DIG__ 16
+#define __DEC64_MIN_EXP__ (-382)
+#define __DEC64_MAX_EXP__ 385
+#define __DEC64_MIN__ 1E-383DD
+#define __DEC64_MAX__ 9.999999999999999E384DD
+#define __DEC64_EPSILON__ 1E-15DD
+#define __DEC64_SUBNORMAL_MIN__ 0.000000000000001E-383DD
+#define __DEC128_MANT_DIG__ 34
+#define __DEC128_MIN_EXP__ (-6142)
+#define __DEC128_MAX_EXP__ 6145
+#define __DEC128_MIN__ 1E-6143DL
+#define __DEC128_MAX__ 9.999999999999999999999999999999999E6144DL
+#define __DEC128_EPSILON__ 1E-33DL
+#define __DEC128_SUBNORMAL_MIN__ 0.000000000000000000000000000000001E-6143DL
+#define __SFRACT_FBIT__ 7
+#define __SFRACT_IBIT__ 0
+#define __SFRACT_MIN__ (-0.5HR-0.5HR)
+#define __SFRACT_MAX__ 0X7FP-7HR
+#define __SFRACT_EPSILON__ 0x1P-7HR
+#define __USFRACT_FBIT__ 8
+#define __USFRACT_IBIT__ 0
+#define __USFRACT_MIN__ 0.0UHR
+#define __USFRACT_MAX__ 0XFFP-8UHR
+#define __USFRACT_EPSILON__ 0x1P-8UHR
+#define __FRACT_FBIT__ 15
+#define __FRACT_IBIT__ 0
+#define __FRACT_MIN__ (-0.5R-0.5R)
+#define __FRACT_MAX__ 0X7FFFP-15R
+#define __FRACT_EPSILON__ 0x1P-15R
+#define __UFRACT_FBIT__ 16
+#define __UFRACT_IBIT__ 0
+#define __UFRACT_MIN__ 0.0UR
+#define __UFRACT_MAX__ 0XFFFFP-16UR
+#define __UFRACT_EPSILON__ 0x1P-16UR
+#define __LFRACT_FBIT__ 31
+#define __LFRACT_IBIT__ 0
+#define __LFRACT_MIN__ (-0.5LR-0.5LR)
+#define __LFRACT_MAX__ 0X7FFFFFFFP-31LR
+#define __LFRACT_EPSILON__ 0x1P-31LR
+#define __ULFRACT_FBIT__ 32
+#define __ULFRACT_IBIT__ 0
+#define __ULFRACT_MIN__ 0.0ULR
+#define __ULFRACT_MAX__ 0XFFFFFFFFP-32ULR
+#define __ULFRACT_EPSILON__ 0x1P-32ULR
+#define __LLFRACT_FBIT__ 63
+#define __LLFRACT_IBIT__ 0
+#define __LLFRACT_MIN__ (-0.5LLR-0.5LLR)
+#define __LLFRACT_MAX__ 0X7FFFFFFFFFFFFFFFP-63LLR
+#define __LLFRACT_EPSILON__ 0x1P-63LLR
+#define __ULLFRACT_FBIT__ 64
+#define __ULLFRACT_IBIT__ 0
+#define __ULLFRACT_MIN__ 0.0ULLR
+#define __ULLFRACT_MAX__ 0XFFFFFFFFFFFFFFFFP-64ULLR
+#define __ULLFRACT_EPSILON__ 0x1P-64ULLR
+#define __SACCUM_FBIT__ 7
+#define __SACCUM_IBIT__ 8
+#define __SACCUM_MIN__ (-0X1P7HK-0X1P7HK)
+#define __SACCUM_MAX__ 0X7FFFP-7HK
+#define __SACCUM_EPSILON__ 0x1P-7HK
+#define __USACCUM_FBIT__ 8
+#define __USACCUM_IBIT__ 8
+#define __USACCUM_MIN__ 0.0UHK
+#define __USACCUM_MAX__ 0XFFFFP-8UHK
+#define __USACCUM_EPSILON__ 0x1P-8UHK
+#define __ACCUM_FBIT__ 15
+#define __ACCUM_IBIT__ 16
+#define __ACCUM_MIN__ (-0X1P15K-0X1P15K)
+#define __ACCUM_MAX__ 0X7FFFFFFFP-15K
+#define __ACCUM_EPSILON__ 0x1P-15K
+#define __UACCUM_FBIT__ 16
+#define __UACCUM_IBIT__ 16
+#define __UACCUM_MIN__ 0.0UK
+#define __UACCUM_MAX__ 0XFFFFFFFFP-16UK
+#define __UACCUM_EPSILON__ 0x1P-16UK
+#define __LACCUM_FBIT__ 31
+#define __LACCUM_IBIT__ 32
+#define __LACCUM_MIN__ (-0X1P31LK-0X1P31LK)
+#define __LACCUM_MAX__ 0X7FFFFFFFFFFFFFFFP-31LK
+#define __LACCUM_EPSILON__ 0x1P-31LK
+#define __ULACCUM_FBIT__ 32
+#define __ULACCUM_IBIT__ 32
+#define __ULACCUM_MIN__ 0.0ULK
+#define __ULACCUM_MAX__ 0XFFFFFFFFFFFFFFFFP-32ULK
+#define __ULACCUM_EPSILON__ 0x1P-32ULK
+#define __LLACCUM_FBIT__ 63
+#define __LLACCUM_IBIT__ 64
+#define __LLACCUM_MIN__ (-0X1P63LLK-0X1P63LLK)
+#define __LLACCUM_MAX__ 0X7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFP-63LLK
+#define __LLACCUM_EPSILON__ 0x1P-63LLK
+#define __ULLACCUM_FBIT__ 64
+#define __ULLACCUM_IBIT__ 64
+#define __ULLACCUM_MIN__ 0.0ULLK
+#define __ULLACCUM_MAX__ 0XFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFP-64ULLK
+#define __ULLACCUM_EPSILON__ 0x1P-64ULLK
+#define __QQ_FBIT__ 7
+#define __QQ_IBIT__ 0
+#define __HQ_FBIT__ 15
+#define __HQ_IBIT__ 0
+#define __SQ_FBIT__ 31
+#define __SQ_IBIT__ 0
+#define __DQ_FBIT__ 63
+#define __DQ_IBIT__ 0
+#define __TQ_FBIT__ 127
+#define __TQ_IBIT__ 0
+#define __UQQ_FBIT__ 8
+#define __UQQ_IBIT__ 0
+#define __UHQ_FBIT__ 16
+#define __UHQ_IBIT__ 0
+#define __USQ_FBIT__ 32
+#define __USQ_IBIT__ 0
+#define __UDQ_FBIT__ 64
+#define __UDQ_IBIT__ 0
+#define __UTQ_FBIT__ 128
+#define __UTQ_IBIT__ 0
+#define __HA_FBIT__ 7
+#define __HA_IBIT__ 8
+#define __SA_FBIT__ 15
+#define __SA_IBIT__ 16
+#define __DA_FBIT__ 31
+#define __DA_IBIT__ 32
+#define __TA_FBIT__ 63
+#define __TA_IBIT__ 64
+#define __UHA_FBIT__ 8
+#define __UHA_IBIT__ 8
+#define __USA_FBIT__ 16
+#define __USA_IBIT__ 16
+#define __UDA_FBIT__ 32
+#define __UDA_IBIT__ 32
+#define __UTA_FBIT__ 64
+#define __UTA_IBIT__ 64
+#define __REGISTER_PREFIX__ 
+#define __USER_LABEL_PREFIX__ 
+#define __VERSION__ "4.4.0"
+#define __GNUC_GNU_INLINE__ 1
+#define _LP64 1
+#define __LP64__ 1
+#define __OPTIMIZE__ 1
+#define __FINITE_MATH_ONLY__ 0
+#define __GCC_HAVE_SYNC_COMPARE_AND_SWAP_1 1
+#define __GCC_HAVE_SYNC_COMPARE_AND_SWAP_2 1
+#define __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4 1
+#define __GCC_HAVE_SYNC_COMPARE_AND_SWAP_8 1
+#define __GCC_HAVE_DWARF2_CFI_ASM 1
+#define __SIZEOF_INT__ 4
+#define __SIZEOF_LONG__ 8
+#define __SIZEOF_LONG_LONG__ 8
+#define __SIZEOF_SHORT__ 2
+#define __SIZEOF_FLOAT__ 4
+#define __SIZEOF_DOUBLE__ 8
+#define __SIZEOF_LONG_DOUBLE__ 16
+#define __SIZEOF_SIZE_T__ 8
+#define __SIZEOF_WCHAR_T__ 4
+#define __SIZEOF_WINT_T__ 4
+#define __SIZEOF_PTRDIFF_T__ 8
+#define __SIZEOF_POINTER__ 8
+#define __mips__ 1
+#define _mips 1
+#define mips 1
+#define __mips64 1
+#define __R4000 1
+#define __R4000__ 1
+#define R4000 1
+#define _R4000 1
+#define __mips_fpr 64
+#define _MIPS_ARCH_MIPS64R2 1
+#define _MIPS_ARCH "mips64r2"
+#define _MIPS_TUNE_MIPS64R2 1
+#define _MIPS_TUNE "mips64r2"
+#define __mips 64
+#define __mips_isa_rev 2
+#define _MIPS_ISA _MIPS_ISA_MIPS64
+#define _ABI64 3
+#define _MIPS_SIM _ABI64
+#define _MIPS_SZINT 32
+#define _MIPS_SZLONG 64
+#define _MIPS_SZPTR 64
+#define _MIPS_FPSET 32
+#define __mips_hard_float 1
+#define __MIPSEL 1
+#define __MIPSEL__ 1
+#define MIPSEL 1
+#define _MIPSEL 1
+#define __LANGUAGE_C 1
+#define __LANGUAGE_C__ 1
+#define LANGUAGE_C 1
+#define _LANGUAGE_C 1
+#define __GCC_HAVE_BUILTIN_MIPS_CACHE 1
+#define __gnu_linux__ 1
+#define __linux 1
+#define __linux__ 1
+#define linux 1
+#define __unix 1
+#define __unix__ 1
+#define unix 1
+#define __ELF__ 1
+#define __BIGGEST_ALIGNMENT__ 16
+# 1 "<command-line>"
+#define GUEST 1
+#define CPU_COUNT_PER_US 10
+# 1 "/loongson/ejtag-debug/bin/include/common.h" 1
+
+#define __COMMON_H__ 
+# 1 "/loongson/ejtag-debug/bin/include/regdef.h" 1
+/*	$OpenBSD: regdef.h,v 1.3 1999/01/27 04:46:06 imp Exp $	*/
+
+/*
+ * Copyright (c) 1992, 1993
+ *	The Regents of the University of California.  All rights reserved.
+ *
+ * This code is derived from software contributed to Berkeley by
+ * Ralph Campbell. This file is derived from the MIPS RISC
+ * Architecture book by Gerry Kane.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ * 4. Neither the name of the University nor the names of its contributors
+ *    may be used to endorse or promote products derived from this software
+ *    without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ *
+ *	@(#)regdef.h	8.1 (Berkeley) 6/10/93
+ */
+
+#define _MIPS_REGDEF_H_ 
+# 116 "/loongson/ejtag-debug/bin/include/regdef.h"
+#define FIFO 0x1F0
+#define STACK 0x1E8
+#define PARAM 0x1E0
+#define PARAMI 0x1E0
+#define PARAMO 0x1E0
+#define SERIAL 0x1D8
+#define FIFO1 0x1D0
+#define RTC 0x1C8
+#define HEX_ADDR 0x1C0
+#define RET_ADDR 0x1B8
+#define SPI_IOBASE 0x100
+#define LS1DFLASH_IOBASE 0x108
+
+#define DMEM 0x0
+# 4 "/loongson/ejtag-debug/bin/include/common.h" 2
+#define SERIAL_REG (0xffffffffff200000+SERIAL)
+#define RTC_REG (0xffffffffff200000+RTC)
+#define ARGC_REG (0xffffffffff200000+RET_ADDR)
+#define HEX_REG (0xffffffffff200000+HEX_ADDR)
+
+#define ___constant_swab16(x) ((unsigned short)( (((unsigned short)(x) & (unsigned short)0x00ffU) << 8) | (((unsigned short)(x) & (unsigned short)0xff00U) >> 8)))
+
+
+
+#define ___constant_swab32(x) ((unsigned int)( (((unsigned int)(x) & (unsigned int)0x000000ffUL) << 24) | (((unsigned int)(x) & (unsigned int)0x0000ff00UL) << 8) | (((unsigned int)(x) & (unsigned int)0x00ff0000UL) >> 8) | (((unsigned int)(x) & (unsigned int)0xff000000UL) >> 24)))
+
+
+
+
+
+#define ___constant_swab64(x) ((unsigned long long)( (((unsigned long long)(x) & (unsigned long long)0x00000000000000ffULL) << 56) | (((unsigned long long)(x) & (unsigned long long)0x000000000000ff00ULL) << 40) | (((unsigned long long)(x) & (unsigned long long)0x0000000000ff0000ULL) << 24) | (((unsigned long long)(x) & (unsigned long long)0x00000000ff000000ULL) << 8) | (((unsigned long long)(x) & (unsigned long long)0x000000ff00000000ULL) >> 8) | (((unsigned long long)(x) & (unsigned long long)0x0000ff0000000000ULL) >> 24) | (((unsigned long long)(x) & (unsigned long long)0x00ff000000000000ULL) >> 40) | (((unsigned long long)(x) & (unsigned long long)0xff00000000000000ULL) >> 56)))
+# 30 "/loongson/ejtag-debug/bin/include/common.h"
+# 1 "/loongson/ejtag-debug/bin/include/stdarg.h" 1
+
+#define __STDARG_H__ 
+typedef void * va_list;
+
+
+
+#define va_start __builtin_va_start
+
+#define va_arg __builtin_va_arg
+#define va_end __builtin_va_end
+# 31 "/loongson/ejtag-debug/bin/include/common.h" 2
+# 1 "/loongson/ejtag-debug/bin/include/types.h" 1
+
+#define __TYPE__H__ 
+typedef unsigned long long u64;
+typedef unsigned int u32;
+typedef unsigned short u16;
+typedef unsigned char u8;
+typedef unsigned int uint;
+typedef char __s8;
+typedef short __s16;
+typedef int __s32;
+typedef long long __s64;
+typedef char s8;
+typedef short s16;
+typedef int s32;
+typedef long long s64;
+typedef unsigned char __u8;
+typedef unsigned short __u16;
+typedef unsigned int __u32;
+typedef unsigned long long __u64;
+typedef char int8_t;
+typedef short int16_t;
+typedef int int32_t;
+typedef long long int64_t;
+typedef unsigned char uint8_t;
+typedef unsigned short uint16_t;
+typedef unsigned int uint32_t;
+typedef unsigned long long uint64_t;
+typedef unsigned char u_int8_t;
+typedef unsigned short u_int16_t;
+typedef unsigned int u_int32_t;
+typedef unsigned long long u_int64_t;
+typedef unsigned char u_char;
+typedef unsigned int u_int;
+typedef unsigned long u_long;
+typedef unsigned char __le8;
+typedef unsigned short __le16;
+typedef unsigned int __le32;
+typedef unsigned long long __le64;
+typedef unsigned int __be32;
+typedef int bool;
+enum {
+false = 0,
+true = 1,
+};
+typedef unsigned long dma_addr_t;
+typedef int gfp_t;
+typedef unsigned long uintptr_t;
+typedef unsigned long phys_addr_t;
+typedef unsigned char uchar;
+typedef unsigned short ushort;
+typedef unsigned long ulong;
+
+#define __iomem 
+#define __packed __attribute__((packed))
+
+
+#define DIV_ROUND_UP(n,d) (((n) + (d) - 1) / (d))
+#define BITS_PER_LONG _MIPS_SZLONG
+#define BIT(nr) (1UL << (nr))
+#define BIT_ULL(nr) (1ULL << (nr))
+#define BIT_MASK(nr) (1UL << ((nr) % BITS_PER_LONG))
+#define BIT_WORD(nr) ((nr) / BITS_PER_LONG)
+#define BIT_ULL_MASK(nr) (1ULL << ((nr) % BITS_PER_LONG_LONG))
+#define BIT_ULL_WORD(nr) ((nr) / BITS_PER_LONG_LONG)
+#define BITS_PER_BYTE 8
+#define BITS_TO_LONGS(nr) DIV_ROUND_UP(nr, BITS_PER_BYTE * sizeof(long))
+#define DECLARE_BITMAP(name,bits) unsigned long name[BITS_TO_LONGS(bits)]
+
+typedef unsigned long fdt_addr_t;
+typedef long ssize_t;
+typedef long long off_t;
+typedef long long loff_t;
+#define SSIZE_MAX LONG_MAX
+typedef u_int32_t pcireg_t; /* configuration space register XXX */
+typedef unsigned long device_t;
+typedef unsigned int mode_t;
+typedef unsigned int dev_t;
+typedef long intptr_t;
+typedef u_int32_t bus_addr_t;
+typedef u_int32_t bus_size_t;
+typedef u_int32_t bus_space_handle_t;
+typedef unsigned long vaddr_t;
+typedef char *caddr_t;
+typedef unsigned long vm_offset_t;
+typedef unsigned int paddr_t;
+typedef unsigned int vm_size_t;
+typedef unsigned long size_t;
+typedef long long quad_t;
+typedef unsigned long long u_quad_t; /* quads */
+# 32 "/loongson/ejtag-debug/bin/include/common.h" 2
+#define __P(x) x
+#define SSIZE_MAX LONG_MAX
+
+int printf (const char *fmt, ...);
+int newprintf (const char *fmt, ...);
+int printbase(long v,int w,int base,int sign);
+int snprintbase(char *d, int n, long v,int w,int base,int sign);
+int sprintbase(char *d, long v,int w,int base,int sign);
+int tvsnprintf(char *buf, int n, const char *fmt, void **arg);
+int tsnprintf(char *buf, int n, const char *fmt,...);
+int tsprintf(char *buf, const char *fmt,...);
+#define isdigit(c) (c>='0' && c<='9')
+
+#define NULL ((void *)0)
+
+#define __read_32bit_c0_register(source,sel) ({ int __res; if (sel == 0) __asm__ __volatile__( "mfc0\t%0, " #source "\n\t" : "=r" (__res)); else __asm__ __volatile__( ".set\tmips32\n\t" "mfc0\t%0, " #source ", " #sel "\n\t" ".set\tmips0\n\t" : "=r" (__res)); __res; })
+# 63 "/loongson/ejtag-debug/bin/include/common.h"
+#define __read_64bit_c0_split(source,sel) ({ unsigned long long val; unsigned long flags; local_irq_save(flags); if (sel == 0) __asm__ __volatile__( ".set\tmips64\n\t" "dmfc0\t%M0, " #source "\n\t" "dsll\t%L0, %M0, 32\n\t" "dsrl\t%M0, %M0, 32\n\t" "dsrl\t%L0, %L0, 32\n\t" ".set\tmips0" : "=r" (val)); else __asm__ __volatile__( ".set\tmips64\n\t" "dmfc0\t%M0, " #source ", " #sel "\n\t" "dsll\t%L0, %M0, 32\n\t" "dsrl\t%M0, %M0, 32\n\t" "dsrl\t%L0, %L0, 32\n\t" ".set\tmips0" : "=r" (val)); local_irq_restore(flags); val; })
+# 92 "/loongson/ejtag-debug/bin/include/common.h"
+#define __read_64bit_c0_register(source,sel) ({ unsigned long long __res; if (sizeof(unsigned long) == 4) __res = __read_64bit_c0_split(source, sel); else if (sel == 0) __asm__ __volatile__( ".set\tmips3\n\t" "dmfc0\t%0, " #source "\n\t" ".set\tmips0" : "=r" (__res)); else __asm__ __volatile__( ".set\tmips64\n\t" "dmfc0\t%0, " #source ", " #sel "\n\t" ".set\tmips0" : "=r" (__res)); __res; })
+# 113 "/loongson/ejtag-debug/bin/include/common.h"
+#define __write_32bit_c0_register(register,sel,value) do { if (sel == 0) __asm__ __volatile__( "mtc0\t%z0, " #register "\n\t" : : "Jr" ((unsigned int)(value))); else __asm__ __volatile__( ".set\tmips32\n\t" "mtc0\t%z0, " #register ", " #sel "\n\t" ".set\tmips0" : : "Jr" ((unsigned int)(value))); } while (0)
+# 128 "/loongson/ejtag-debug/bin/include/common.h"
+#define __write_64bit_c0_split(source,sel,val) do { unsigned long flags; local_irq_save(flags); if (sel == 0) __asm__ __volatile__( ".set\tmips64\n\t" "dsll\t%L0, %L0, 32\n\t" "dsrl\t%L0, %L0, 32\n\t" "dsll\t%M0, %M0, 32\n\t" "or\t%L0, %L0, %M0\n\t" "dmtc0\t%L0, " #source "\n\t" ".set\tmips0" : : "r" (val)); else __asm__ __volatile__( ".set\tmips64\n\t" "dsll\t%L0, %L0, 32\n\t" "dsrl\t%L0, %L0, 32\n\t" "dsll\t%M0, %M0, 32\n\t" "or\t%L0, %L0, %M0\n\t" "dmtc0\t%L0, " #source ", " #sel "\n\t" ".set\tmips0" : : "r" (val)); local_irq_restore(flags); } while (0)
+# 156 "/loongson/ejtag-debug/bin/include/common.h"
+#define __write_64bit_c0_register(register,sel,value) do { if (sizeof(unsigned long) == 4) __write_64bit_c0_split(register, sel, value); else if (sel == 0) __asm__ __volatile__( ".set\tmips3\n\t" "dmtc0\t%z0, " #register "\n\t" ".set\tmips0" : : "Jr" (value)); else __asm__ __volatile__( ".set\tmips64\n\t" "dmtc0\t%z0, " #register ", " #sel "\n\t" ".set\tmips0" : : "Jr" (value)); } while (0)
+# 175 "/loongson/ejtag-debug/bin/include/common.h"
+#define __read_ulong_c0_register(reg,sel) ((sizeof(unsigned long) == 4) ? (unsigned long) __read_32bit_c0_register(reg, sel) : (unsigned long) __read_64bit_c0_register(reg, sel))
+
+
+
+
+#define __write_ulong_c0_register(reg,sel,val) do { if (sizeof(unsigned long) == 4) __write_32bit_c0_register(reg, sel, val); else __write_64bit_c0_register(reg, sel, val); } while (0)
+# 190 "/loongson/ejtag-debug/bin/include/common.h"
+#define read_c0_index() __read_32bit_c0_register($0, 0)
+#define write_c0_index(val) __write_32bit_c0_register($0, 0, val)
+
+#define read_c0_entrylo0() __read_ulong_c0_register($2, 0)
+#define write_c0_entrylo0(val) __write_ulong_c0_register($2, 0, val)
+
+#define read_c0_entrylo1() __read_ulong_c0_register($3, 0)
+#define write_c0_entrylo1(val) __write_ulong_c0_register($3, 0, val)
+
+#define read_c0_conf() __read_32bit_c0_register($3, 0)
+#define write_c0_conf(val) __write_32bit_c0_register($3, 0, val)
+
+#define read_c0_context() __read_ulong_c0_register($4, 0)
+#define write_c0_context(val) __write_ulong_c0_register($4, 0, val)
+
+#define read_c0_pagemask() __read_32bit_c0_register($5, 0)
+#define write_c0_pagemask(val) __write_32bit_c0_register($5, 0, val)
+
+#define read_c0_wired() __read_32bit_c0_register($6, 0)
+#define write_c0_wired(val) __write_32bit_c0_register($6, 0, val)
+
+#define read_c0_info() __read_32bit_c0_register($7, 0)
+
+#define read_c0_cache() __read_32bit_c0_register($7, 0)
+#define write_c0_cache(val) __write_32bit_c0_register($7, 0, val)
+
+#define read_c0_badvaddr() __read_ulong_c0_register($8, 0)
+#define write_c0_badvaddr(val) __write_ulong_c0_register($8, 0, val)
+
+#define read_c0_count() __read_32bit_c0_register($9, 0)
+#define write_c0_count(val) __write_32bit_c0_register($9, 0, val)
+
+#define read_c0_count2() __read_32bit_c0_register($9, 6)
+#define write_c0_count2(val) __write_32bit_c0_register($9, 6, val)
+
+#define read_c0_count3() __read_32bit_c0_register($9, 7)
+#define write_c0_count3(val) __write_32bit_c0_register($9, 7, val)
+
+#define read_c0_entryhi() __read_ulong_c0_register($10, 0)
+#define write_c0_entryhi(val) __write_ulong_c0_register($10, 0, val)
+
+#define read_c0_compare() __read_32bit_c0_register($11, 0)
+#define write_c0_compare(val) __write_32bit_c0_register($11, 0, val)
+
+#define read_c0_compare2() __read_32bit_c0_register($11, 6)
+#define write_c0_compare2(val) __write_32bit_c0_register($11, 6, val)
+
+#define read_c0_compare3() __read_32bit_c0_register($11, 7)
+#define write_c0_compare3(val) __write_32bit_c0_register($11, 7, val)
+
+#define read_c0_status() __read_32bit_c0_register($12, 0)
+
+#define write_c0_status(val) __write_32bit_c0_register($12, 0, val)
+
+
+#define read_c0_cause() __read_32bit_c0_register($13, 0)
+#define write_c0_cause(val) __write_32bit_c0_register($13, 0, val)
+
+#define read_c0_epc() __read_ulong_c0_register($14, 0)
+#define write_c0_epc(val) __write_ulong_c0_register($14, 0, val)
+
+#define read_c0_prid() __read_32bit_c0_register($15, 0)
+
+#define read_c0_config() __read_32bit_c0_register($16, 0)
+#define read_c0_config1() __read_32bit_c0_register($16, 1)
+#define read_c0_config2() __read_32bit_c0_register($16, 2)
+#define read_c0_config3() __read_32bit_c0_register($16, 3)
+#define read_c0_config4() __read_32bit_c0_register($16, 4)
+#define read_c0_config5() __read_32bit_c0_register($16, 5)
+#define read_c0_config6() __read_32bit_c0_register($16, 6)
+#define read_c0_config7() __read_32bit_c0_register($16, 7)
+#define write_c0_config(val) __write_32bit_c0_register($16, 0, val)
+#define write_c0_config1(val) __write_32bit_c0_register($16, 1, val)
+#define write_c0_config2(val) __write_32bit_c0_register($16, 2, val)
+#define write_c0_config3(val) __write_32bit_c0_register($16, 3, val)
+#define write_c0_config4(val) __write_32bit_c0_register($16, 4, val)
+#define write_c0_config5(val) __write_32bit_c0_register($16, 5, val)
+#define write_c0_config6(val) __write_32bit_c0_register($16, 6, val)
+#define write_c0_config7(val) __write_32bit_c0_register($16, 7, val)
+
+/*
+ * The WatchLo register.  There may be upto 8 of them.
+ */
+#define read_c0_watchlo0() __read_ulong_c0_register($18, 0)
+#define read_c0_watchlo1() __read_ulong_c0_register($18, 1)
+#define read_c0_watchlo2() __read_ulong_c0_register($18, 2)
+#define read_c0_watchlo3() __read_ulong_c0_register($18, 3)
+#define read_c0_watchlo4() __read_ulong_c0_register($18, 4)
+#define read_c0_watchlo5() __read_ulong_c0_register($18, 5)
+#define read_c0_watchlo6() __read_ulong_c0_register($18, 6)
+#define read_c0_watchlo7() __read_ulong_c0_register($18, 7)
+#define write_c0_watchlo0(val) __write_ulong_c0_register($18, 0, val)
+#define write_c0_watchlo1(val) __write_ulong_c0_register($18, 1, val)
+#define write_c0_watchlo2(val) __write_ulong_c0_register($18, 2, val)
+#define write_c0_watchlo3(val) __write_ulong_c0_register($18, 3, val)
+#define write_c0_watchlo4(val) __write_ulong_c0_register($18, 4, val)
+#define write_c0_watchlo5(val) __write_ulong_c0_register($18, 5, val)
+#define write_c0_watchlo6(val) __write_ulong_c0_register($18, 6, val)
+#define write_c0_watchlo7(val) __write_ulong_c0_register($18, 7, val)
+
+/*
+ * The WatchHi register.  There may be upto 8 of them.
+ */
+#define read_c0_watchhi0() __read_32bit_c0_register($19, 0)
+#define read_c0_watchhi1() __read_32bit_c0_register($19, 1)
+#define read_c0_watchhi2() __read_32bit_c0_register($19, 2)
+#define read_c0_watchhi3() __read_32bit_c0_register($19, 3)
+#define read_c0_watchhi4() __read_32bit_c0_register($19, 4)
+#define read_c0_watchhi5() __read_32bit_c0_register($19, 5)
+#define read_c0_watchhi6() __read_32bit_c0_register($19, 6)
+#define read_c0_watchhi7() __read_32bit_c0_register($19, 7)
+
+#define write_c0_watchhi0(val) __write_32bit_c0_register($19, 0, val)
+#define write_c0_watchhi1(val) __write_32bit_c0_register($19, 1, val)
+#define write_c0_watchhi2(val) __write_32bit_c0_register($19, 2, val)
+#define write_c0_watchhi3(val) __write_32bit_c0_register($19, 3, val)
+#define write_c0_watchhi4(val) __write_32bit_c0_register($19, 4, val)
+#define write_c0_watchhi5(val) __write_32bit_c0_register($19, 5, val)
+#define write_c0_watchhi6(val) __write_32bit_c0_register($19, 6, val)
+#define write_c0_watchhi7(val) __write_32bit_c0_register($19, 7, val)
+
+
+static inline void tlb_write_indexed(void)
+{
+ __asm__ __volatile__(
+  ".set noreorder\n\t"
+  "tlbwi\n\t"
+  ".set reorder");
+}
+void * malloc(size_t nbytes);
+void * malloc_align(size_t nbytes, int align);
+void * zalloc_align(size_t nbytes, int align);
+void free(void *ap);
+void * memset(void * s,int c, size_t count);
+#define __always_inline inline __attribute__((always_inline))
+#define noinline __attribute__((noinline))
+#define __deprecated __attribute__((deprecated))
+#define __packed __attribute__((packed))
+#define __weak __attribute__((weak))
+#define __alias(symbol) __attribute__((alias(#symbol)))
+#define __attribute_const__ __attribute__((__const__))
+#define __maybe_unused __attribute__((unused))
+#define __always_unused __attribute__((unused))
+#define __aligned(x) __attribute__((aligned(x)))
+#define ROUND(a,b) (((a) + (b) - 1) & ~((b) - 1))
+# 1 "<command-line>" 2
+# 1 "/loongson/ejtag-debug/bin/lib/malloc.c"
+/* $Id: malloc.c,v 1.1.1.1 2006/09/14 01:59:08 root Exp $ */
+
+/*
+ * Copyright (c) 2000-2002 Opsycon AB  (www.opsycon.se)
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by Opsycon AB.
+ * 4. The name of the author may not be used to endorse or promote products
+ *    derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS
+ * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ *
+ */
+# 1 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h" 1
+/*
+ * This file is subject to the terms and conditions of the GNU General Public
+ * License.  See the file "COPYING" in the main directory of this archive
+ * for more details.
+ *
+ * Copyright (C) 1994, 1995, 1996, 1997, 2000, 2001 by Ralf Baechle
+ * Copyright (C) 2000 Silicon Graphics, Inc.
+ * Modified for further R[236]000 support by Paul M. Antoine, 1996.
+ * Kevin D. Kissell, kevink@mips.com and Carsten Langgaard, carstenl@mips.com
+ * Copyright (C) 2000, 07 MIPS Technologies, Inc.
+ * Copyright (C) 2003, 2004  Maciej W. Rozycki
+ */
+
+#define _ASM_MIPSREGS_H 
+
+//#include <linux/linkage.h>
+//#include <asm/hazards.h>
+//#include <asm/war.h>
+
+/*
+ * The following macros are especially useful for __asm__
+ * inline assembler.
+ */
+
+#define __STR(x) #x
+
+
+#define STR(x) __STR(x)
+
+
+/*
+ *  Configure language
+ */
+
+
+
+#define _ULCAST_ (unsigned long)
+
+
+/*
+ * Coprocessor 0 register names
+ */
+#define CP0_INDEX $0
+#define CP0_RANDOM $1
+#define CP0_ENTRYLO0 $2
+#define CP0_ENTRYLO1 $3
+#define CP0_CONF $3
+#define CP0_CONTEXT $4
+#define CP0_PAGEMASK $5
+#define CP0_WIRED $6
+#define CP0_INFO $7
+#define CP0_BADVADDR $8
+#define CP0_COUNT $9
+#define CP0_ENTRYHI $10
+#define CP0_COMPARE $11
+#define CP0_STATUS $12
+#define CP0_CAUSE $13
+#define CP0_EPC $14
+#define CP0_PRID $15
+#define CP0_CONFIG $16
+#define CP0_LLADDR $17
+#define CP0_WATCHLO $18
+#define CP0_WATCHHI $19
+#define CP0_XCONTEXT $20
+#define CP0_FRAMEMASK $21
+#define CP0_DIAGNOSTIC $22
+#define CP0_DEBUG $23
+#define CP0_DEPC $24
+#define CP0_PERFORMANCE $25
+#define CP0_ECC $26
+#define CP0_CACHEERR $27
+#define CP0_TAGLO $28
+#define CP0_TAGHI $29
+#define CP0_ERROREPC $30
+#define CP0_DESAVE $31
+
+/*
+ * R4640/R4650 cp0 register names.  These registers are listed
+ * here only for completeness; without MMU these CPUs are not useable
+ * by Linux.  A future ELKS port might take make Linux run on them
+ * though ...
+ */
+#define CP0_IBASE $0
+#define CP0_IBOUND $1
+#define CP0_DBASE $2
+#define CP0_DBOUND $3
+#define CP0_CALG $17
+#define CP0_IWATCH $18
+#define CP0_DWATCH $19
+
+/*
+ * Coprocessor 0 Set 1 register names
+ */
+#define CP0_S1_DERRADDR0 $26
+#define CP0_S1_DERRADDR1 $27
+#define CP0_S1_INTCONTROL $20
+
+/*
+ * Coprocessor 0 Set 2 register names
+ */
+#define CP0_S2_SRSCTL $12
+
+/*
+ * Coprocessor 0 Set 3 register names
+ */
+#define CP0_S3_SRSMAP $12
+
+/*
+ *  TX39 Series
+ */
+#define CP0_TX39_CACHE $7
+
+/*
+ * Coprocessor 1 (FPU) register names
+ */
+#define CP1_REVISION $0
+#define CP1_STATUS $31
+
+/*
+ * FPU Status Register Values
+ */
+/*
+ * Status Register Values
+ */
+
+#define FPU_CSR_FLUSH 0x01000000
+#define FPU_CSR_COND 0x00800000
+#define FPU_CSR_COND0 0x00800000
+#define FPU_CSR_COND1 0x02000000
+#define FPU_CSR_COND2 0x04000000
+#define FPU_CSR_COND3 0x08000000
+#define FPU_CSR_COND4 0x10000000
+#define FPU_CSR_COND5 0x20000000
+#define FPU_CSR_COND6 0x40000000
+#define FPU_CSR_COND7 0x80000000
+
+/*
+ * Bits 18 - 20 of the FPU Status Register will be read as 0,
+ * and should be written as zero.
+ */
+#define FPU_CSR_RSVD 0x001c0000
+
+/*
+ * X the exception cause indicator
+ * E the exception enable
+ * S the sticky/flag bit
+*/
+#define FPU_CSR_ALL_X 0x0003f000
+#define FPU_CSR_UNI_X 0x00020000
+#define FPU_CSR_INV_X 0x00010000
+#define FPU_CSR_DIV_X 0x00008000
+#define FPU_CSR_OVF_X 0x00004000
+#define FPU_CSR_UDF_X 0x00002000
+#define FPU_CSR_INE_X 0x00001000
+
+#define FPU_CSR_ALL_E 0x00000f80
+#define FPU_CSR_INV_E 0x00000800
+#define FPU_CSR_DIV_E 0x00000400
+#define FPU_CSR_OVF_E 0x00000200
+#define FPU_CSR_UDF_E 0x00000100
+#define FPU_CSR_INE_E 0x00000080
+
+#define FPU_CSR_ALL_S 0x0000007c
+#define FPU_CSR_INV_S 0x00000040
+#define FPU_CSR_DIV_S 0x00000020
+#define FPU_CSR_OVF_S 0x00000010
+#define FPU_CSR_UDF_S 0x00000008
+#define FPU_CSR_INE_S 0x00000004
+
+/* Bits 0 and 1 of FPU Status Register specify the rounding mode */
+#define FPU_CSR_RM 0x00000003
+#define FPU_CSR_RN 0x0
+#define FPU_CSR_RZ 0x1
+#define FPU_CSR_RU 0x2
+#define FPU_CSR_RD 0x3
+
+
+/*
+ * Values for PageMask register
+ */
+# 193 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+#define PM_4K 0x00000000
+#define PM_8K 0x00002000
+#define PM_16K 0x00006000
+#define PM_32K 0x0000e000
+#define PM_64K 0x0001e000
+#define PM_128K 0x0003e000
+#define PM_256K 0x0007e000
+#define PM_512K 0x000fe000
+#define PM_1M 0x001fe000
+#define PM_2M 0x003fe000
+#define PM_4M 0x007fe000
+#define PM_8M 0x00ffe000
+#define PM_16M 0x01ffe000
+#define PM_32M 0x03ffe000
+#define PM_64M 0x07ffe000
+#define PM_256M 0x1fffe000
+#define PM_1G 0x7fffe000
+
+
+
+/*
+ * Default page size for a given kernel configuration
+ */
+# 227 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+//#error Bad page size configuration!
+#define CONFIG_PAGE_SIZE_16KB 1
+#define PM_DEFAULT_MASK PM_16K
+
+
+/*
+ * Default huge tlb size for a given kernel configuration
+ */
+
+
+
+
+
+#define PM_HUGE_MASK PM_16M
+# 249 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+/*
+ * Values used for computation of new tlb entries
+ */
+#define PL_4K 12
+#define PL_16K 14
+#define PL_64K 16
+#define PL_256K 18
+#define PL_1M 20
+#define PL_4M 22
+#define PL_16M 24
+#define PL_64M 26
+#define PL_256M 28
+
+/*
+ * R4x00 interrupt enable / cause bits
+ */
+#define IE_SW0 (_ULCAST_(1) << 8)
+#define IE_SW1 (_ULCAST_(1) << 9)
+#define IE_IRQ0 (_ULCAST_(1) << 10)
+#define IE_IRQ1 (_ULCAST_(1) << 11)
+#define IE_IRQ2 (_ULCAST_(1) << 12)
+#define IE_IRQ3 (_ULCAST_(1) << 13)
+#define IE_IRQ4 (_ULCAST_(1) << 14)
+#define IE_IRQ5 (_ULCAST_(1) << 15)
+
+/*
+ * R4x00 interrupt cause bits
+ */
+#define C_SW0 (_ULCAST_(1) << 8)
+#define C_SW1 (_ULCAST_(1) << 9)
+#define C_IRQ0 (_ULCAST_(1) << 10)
+#define C_IRQ1 (_ULCAST_(1) << 11)
+#define C_IRQ2 (_ULCAST_(1) << 12)
+#define C_IRQ3 (_ULCAST_(1) << 13)
+#define C_IRQ4 (_ULCAST_(1) << 14)
+#define C_IRQ5 (_ULCAST_(1) << 15)
+
+/*
+ * Bitfields in the R4xx0 cp0 status register
+ */
+#define ST0_IE 0x00000001
+#define ST0_EXL 0x00000002
+#define ST0_ERL 0x00000004
+#define ST0_KSU 0x00000018
+#define KSU_USER 0x00000010
+#define KSU_SUPERVISOR 0x00000008
+#define KSU_KERNEL 0x00000000
+#define ST0_UX 0x00000020
+#define ST0_SX 0x00000040
+#define ST0_KX 0x00000080
+#define ST0_DE 0x00010000
+#define ST0_CE 0x00020000
+
+/*
+ * Setting c0_status.co enables Hit_Writeback and Hit_Writeback_Invalidate
+ * cacheops in userspace.  This bit exists only on RM7000 and RM9000
+ * processors.
+ */
+#define ST0_CO 0x08000000
+
+/*
+ * Bitfields in the R[23]000 cp0 status register.
+ */
+#define ST0_IEC 0x00000001
+#define ST0_KUC 0x00000002
+#define ST0_IEP 0x00000004
+#define ST0_KUP 0x00000008
+#define ST0_IEO 0x00000010
+#define ST0_KUO 0x00000020
+/* bits 6 & 7 are reserved on R[23]000 */
+#define ST0_ISC 0x00010000
+#define ST0_SWC 0x00020000
+#define ST0_CM 0x00080000
+
+/*
+ * Bits specific to the R4640/R4650
+ */
+#define ST0_UM (_ULCAST_(1) << 4)
+#define ST0_IL (_ULCAST_(1) << 23)
+#define ST0_DL (_ULCAST_(1) << 24)
+
+/*
+ * Enable the MIPS MDMX and DSP ASEs
+ */
+#define ST0_MX 0x01000000
+
+/*
+ * Bitfields in the TX39 family CP0 Configuration Register 3
+ */
+#define TX39_CONF_ICS_SHIFT 19
+#define TX39_CONF_ICS_MASK 0x00380000
+#define TX39_CONF_ICS_1KB 0x00000000
+#define TX39_CONF_ICS_2KB 0x00080000
+#define TX39_CONF_ICS_4KB 0x00100000
+#define TX39_CONF_ICS_8KB 0x00180000
+#define TX39_CONF_ICS_16KB 0x00200000
+
+#define TX39_CONF_DCS_SHIFT 16
+#define TX39_CONF_DCS_MASK 0x00070000
+#define TX39_CONF_DCS_1KB 0x00000000
+#define TX39_CONF_DCS_2KB 0x00010000
+#define TX39_CONF_DCS_4KB 0x00020000
+#define TX39_CONF_DCS_8KB 0x00030000
+#define TX39_CONF_DCS_16KB 0x00040000
+
+#define TX39_CONF_CWFON 0x00004000
+#define TX39_CONF_WBON 0x00002000
+#define TX39_CONF_RF_SHIFT 10
+#define TX39_CONF_RF_MASK 0x00000c00
+#define TX39_CONF_DOZE 0x00000200
+#define TX39_CONF_HALT 0x00000100
+#define TX39_CONF_LOCK 0x00000080
+#define TX39_CONF_ICE 0x00000020
+#define TX39_CONF_DCE 0x00000010
+#define TX39_CONF_IRSIZE_SHIFT 2
+#define TX39_CONF_IRSIZE_MASK 0x0000000c
+#define TX39_CONF_DRSIZE_SHIFT 0
+#define TX39_CONF_DRSIZE_MASK 0x00000003
+
+/*
+ * Status register bits available in all MIPS CPUs.
+ */
+#define ST0_IM 0x0000ff00
+#define STATUSB_IP0 8
+#define STATUSF_IP0 (_ULCAST_(1) << 8)
+#define STATUSB_IP1 9
+#define STATUSF_IP1 (_ULCAST_(1) << 9)
+#define STATUSB_IP2 10
+#define STATUSF_IP2 (_ULCAST_(1) << 10)
+#define STATUSB_IP3 11
+#define STATUSF_IP3 (_ULCAST_(1) << 11)
+#define STATUSB_IP4 12
+#define STATUSF_IP4 (_ULCAST_(1) << 12)
+#define STATUSB_IP5 13
+#define STATUSF_IP5 (_ULCAST_(1) << 13)
+#define STATUSB_IP6 14
+#define STATUSF_IP6 (_ULCAST_(1) << 14)
+#define STATUSB_IP7 15
+#define STATUSF_IP7 (_ULCAST_(1) << 15)
+#define STATUSB_IP8 0
+#define STATUSF_IP8 (_ULCAST_(1) << 0)
+#define STATUSB_IP9 1
+#define STATUSF_IP9 (_ULCAST_(1) << 1)
+#define STATUSB_IP10 2
+#define STATUSF_IP10 (_ULCAST_(1) << 2)
+#define STATUSB_IP11 3
+#define STATUSF_IP11 (_ULCAST_(1) << 3)
+#define STATUSB_IP12 4
+#define STATUSF_IP12 (_ULCAST_(1) << 4)
+#define STATUSB_IP13 5
+#define STATUSF_IP13 (_ULCAST_(1) << 5)
+#define STATUSB_IP14 6
+#define STATUSF_IP14 (_ULCAST_(1) << 6)
+#define STATUSB_IP15 7
+#define STATUSF_IP15 (_ULCAST_(1) << 7)
+#define ST0_CH 0x00040000
+#define ST0_SR 0x00100000
+#define ST0_TS 0x00200000
+#define ST0_BEV 0x00400000
+#define ST0_RE 0x02000000
+#define ST0_FR 0x04000000
+#define ST0_CU 0xf0000000
+#define ST0_CU0 0x10000000
+#define ST0_CU1 0x20000000
+#define ST0_CU2 0x40000000
+#define ST0_CU3 0x80000000
+#define ST0_XX 0x80000000
+
+#define STATMASK 0x1f
+/*
+ * Bitfields and bit numbers in the coprocessor 0 cause register.
+ *
+ * Refer to your MIPS R4xx0 manual, chapter 5 for explanation.
+ */
+#define CAUSEB_EXCCODE 2
+#define CAUSEF_EXCCODE (_ULCAST_(31) << 2)
+#define CAUSEB_IP 8
+#define CAUSEF_IP (_ULCAST_(255) << 8)
+#define CAUSEB_IP0 8
+#define CAUSEF_IP0 (_ULCAST_(1) << 8)
+#define CAUSEB_IP1 9
+#define CAUSEF_IP1 (_ULCAST_(1) << 9)
+#define CAUSEB_IP2 10
+#define CAUSEF_IP2 (_ULCAST_(1) << 10)
+#define CAUSEB_IP3 11
+#define CAUSEF_IP3 (_ULCAST_(1) << 11)
+#define CAUSEB_IP4 12
+#define CAUSEF_IP4 (_ULCAST_(1) << 12)
+#define CAUSEB_IP5 13
+#define CAUSEF_IP5 (_ULCAST_(1) << 13)
+#define CAUSEB_IP6 14
+#define CAUSEF_IP6 (_ULCAST_(1) << 14)
+#define CAUSEB_IP7 15
+#define CAUSEF_IP7 (_ULCAST_(1) << 15)
+#define CAUSEB_IV 23
+#define CAUSEF_IV (_ULCAST_(1) << 23)
+#define CAUSEB_CE 28
+#define CAUSEF_CE (_ULCAST_(3) << 28)
+#define CAUSEB_BD 31
+#define CAUSEF_BD (_ULCAST_(1) << 31)
+
+/*
+ * Bits in the coprocessor 0 config register.
+ */
+/* Generic bits.  */
+#define CONF_CM_CACHABLE_NO_WA 0
+#define CONF_CM_CACHABLE_WA 1
+#define CONF_CM_UNCACHED 2
+#define CONF_CM_CACHABLE_NONCOHERENT 3
+#define CONF_CM_CACHABLE_CE 4
+#define CONF_CM_CACHABLE_COW 5
+#define CONF_CM_CACHABLE_CUW 6
+#define CONF_CM_CACHABLE_ACCELERATED 7
+#define CONF_CM_CMASK 7
+#define CONF_BE (_ULCAST_(1) << 15)
+
+/* Bits common to various processors.  */
+#define CONF_CU (_ULCAST_(1) << 3)
+#define CONF_DB (_ULCAST_(1) << 4)
+#define CONF_IB (_ULCAST_(1) << 5)
+#define CONF_DC (_ULCAST_(7) << 6)
+#define CONF_IC (_ULCAST_(7) << 9)
+#define CONF_EB (_ULCAST_(1) << 13)
+#define CONF_EM (_ULCAST_(1) << 14)
+#define CONF_SM (_ULCAST_(1) << 16)
+#define CONF_SC (_ULCAST_(1) << 17)
+#define CONF_EW (_ULCAST_(3) << 18)
+#define CONF_EP (_ULCAST_(15)<< 24)
+#define CONF_EC (_ULCAST_(7) << 28)
+#define CONF_CM (_ULCAST_(1) << 31)
+
+/* Bits specific to the R4xx0.  */
+#define R4K_CONF_SW (_ULCAST_(1) << 20)
+#define R4K_CONF_SS (_ULCAST_(1) << 21)
+#define R4K_CONF_SB (_ULCAST_(3) << 22)
+
+/* Bits specific to the R5000.  */
+#define R5K_CONF_SE (_ULCAST_(1) << 12)
+#define R5K_CONF_SS (_ULCAST_(3) << 20)
+
+/* Bits specific to the RM7000.  */
+#define RM7K_CONF_SE (_ULCAST_(1) << 3)
+#define RM7K_CONF_TE (_ULCAST_(1) << 12)
+#define RM7K_CONF_CLK (_ULCAST_(1) << 16)
+#define RM7K_CONF_TC (_ULCAST_(1) << 17)
+#define RM7K_CONF_SI (_ULCAST_(3) << 20)
+#define RM7K_CONF_SC (_ULCAST_(1) << 31)
+
+/* Bits specific to the R10000.  */
+#define R10K_CONF_DN (_ULCAST_(3) << 3)
+#define R10K_CONF_CT (_ULCAST_(1) << 5)
+#define R10K_CONF_PE (_ULCAST_(1) << 6)
+#define R10K_CONF_PM (_ULCAST_(3) << 7)
+#define R10K_CONF_EC (_ULCAST_(15)<< 9)
+#define R10K_CONF_SB (_ULCAST_(1) << 13)
+#define R10K_CONF_SK (_ULCAST_(1) << 14)
+#define R10K_CONF_SS (_ULCAST_(7) << 16)
+#define R10K_CONF_SC (_ULCAST_(7) << 19)
+#define R10K_CONF_DC (_ULCAST_(7) << 26)
+#define R10K_CONF_IC (_ULCAST_(7) << 29)
+
+/* Bits specific to the VR41xx.  */
+#define VR41_CONF_CS (_ULCAST_(1) << 12)
+#define VR41_CONF_P4K (_ULCAST_(1) << 13)
+#define VR41_CONF_BP (_ULCAST_(1) << 16)
+#define VR41_CONF_M16 (_ULCAST_(1) << 20)
+#define VR41_CONF_AD (_ULCAST_(1) << 23)
+
+/* Bits specific to the R30xx.  */
+#define R30XX_CONF_FDM (_ULCAST_(1) << 19)
+#define R30XX_CONF_REV (_ULCAST_(1) << 22)
+#define R30XX_CONF_AC (_ULCAST_(1) << 23)
+#define R30XX_CONF_RF (_ULCAST_(1) << 24)
+#define R30XX_CONF_HALT (_ULCAST_(1) << 25)
+#define R30XX_CONF_FPINT (_ULCAST_(7) << 26)
+#define R30XX_CONF_DBR (_ULCAST_(1) << 29)
+#define R30XX_CONF_SB (_ULCAST_(1) << 30)
+#define R30XX_CONF_LOCK (_ULCAST_(1) << 31)
+
+/* Bits specific to the TX49.  */
+#define TX49_CONF_DC (_ULCAST_(1) << 16)
+#define TX49_CONF_IC (_ULCAST_(1) << 17)
+#define TX49_CONF_HALT (_ULCAST_(1) << 18)
+#define TX49_CONF_CWFON (_ULCAST_(1) << 27)
+
+/* Bits specific to the MIPS32/64 PRA.  */
+#define MIPS_CONF_MT (_ULCAST_(7) << 7)
+#define MIPS_CONF_AR (_ULCAST_(7) << 10)
+#define MIPS_CONF_AT (_ULCAST_(3) << 13)
+#define MIPS_CONF_M (_ULCAST_(1) << 31)
+
+/*
+ * Bits in the MIPS32/64 PRA coprocessor 0 config registers 1 and above.
+ */
+#define MIPS_CONF1_FP (_ULCAST_(1) << 0)
+#define MIPS_CONF1_EP (_ULCAST_(1) << 1)
+#define MIPS_CONF1_CA (_ULCAST_(1) << 2)
+#define MIPS_CONF1_WR (_ULCAST_(1) << 3)
+#define MIPS_CONF1_PC (_ULCAST_(1) << 4)
+#define MIPS_CONF1_MD (_ULCAST_(1) << 5)
+#define MIPS_CONF1_C2 (_ULCAST_(1) << 6)
+#define MIPS_CONF1_DA (_ULCAST_(7) << 7)
+#define MIPS_CONF1_DL (_ULCAST_(7) << 10)
+#define MIPS_CONF1_DS (_ULCAST_(7) << 13)
+#define MIPS_CONF1_IA (_ULCAST_(7) << 16)
+#define MIPS_CONF1_IL (_ULCAST_(7) << 19)
+#define MIPS_CONF1_IS (_ULCAST_(7) << 22)
+#define MIPS_CONF1_TLBS (_ULCAST_(63)<< 25)
+
+#define MIPS_CONF2_SA (_ULCAST_(15)<< 0)
+#define MIPS_CONF2_SL (_ULCAST_(15)<< 4)
+#define MIPS_CONF2_SS (_ULCAST_(15)<< 8)
+#define MIPS_CONF2_SU (_ULCAST_(15)<< 12)
+#define MIPS_CONF2_TA (_ULCAST_(15)<< 16)
+#define MIPS_CONF2_TL (_ULCAST_(15)<< 20)
+#define MIPS_CONF2_TS (_ULCAST_(15)<< 24)
+#define MIPS_CONF2_TU (_ULCAST_(7) << 28)
+
+#define MIPS_CONF3_TL (_ULCAST_(1) << 0)
+#define MIPS_CONF3_SM (_ULCAST_(1) << 1)
+#define MIPS_CONF3_MT (_ULCAST_(1) << 2)
+#define MIPS_CONF3_SP (_ULCAST_(1) << 4)
+#define MIPS_CONF3_VINT (_ULCAST_(1) << 5)
+#define MIPS_CONF3_VEIC (_ULCAST_(1) << 6)
+#define MIPS_CONF3_LPA (_ULCAST_(1) << 7)
+#define MIPS_CONF3_DSP (_ULCAST_(1) << 10)
+#define MIPS_CONF3_ULRI (_ULCAST_(1) << 13)
+
+#define MIPS_CONF7_WII (_ULCAST_(1) << 31)
+
+#define MIPS_CONF7_RPS (_ULCAST_(1) << 2)
+
+
+/*
+ * Bits in the MIPS32/64 coprocessor 1 (FPU) revision register.
+ */
+#define MIPS_FPIR_S (_ULCAST_(1) << 16)
+#define MIPS_FPIR_D (_ULCAST_(1) << 17)
+#define MIPS_FPIR_PS (_ULCAST_(1) << 18)
+#define MIPS_FPIR_3D (_ULCAST_(1) << 19)
+#define MIPS_FPIR_W (_ULCAST_(1) << 20)
+#define MIPS_FPIR_L (_ULCAST_(1) << 21)
+#define MIPS_FPIR_F64 (_ULCAST_(1) << 22)
+
+
+
+/*
+ * Functions to access the R10000 performance counters.  These are basically
+ * mfc0 and mtc0 instructions from and to coprocessor register with a 5-bit
+ * performance counter number encoded into bits 1 ... 5 of the instruction.
+ * Only performance counters 0 to 1 actually exist, so for a non-R10000 aware
+ * disassembler these will look like an access to sel 0 or 1.
+ */
+#define read_r10k_perf_cntr(counter) ({ unsigned int __res; __asm__ __volatile__( "mfpc\t%0, %1" : "=r" (__res) : "i" (counter)); __res; })
+# 613 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+#define write_r10k_perf_cntr(counter,val) do { __asm__ __volatile__( "mtpc\t%0, %1" : : "r" (val), "i" (counter)); } while (0)
+
+
+
+
+
+
+
+#define read_r10k_perf_event(counter) ({ unsigned int __res; __asm__ __volatile__( "mfps\t%0, %1" : "=r" (__res) : "i" (counter)); __res; })
+# 632 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+#define write_r10k_perf_cntl(counter,val) do { __asm__ __volatile__( "mtps\t%0, %1" : : "r" (val), "i" (counter)); } while (0)
+# 641 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+/*
+ * Macros to access the system control coprocessor
+ */
+
+#define __read_32bit_c0_register(source,sel) ({ int __res; if (sel == 0) __asm__ __volatile__( "mfc0\t%0, " #source "\n\t" : "=r" (__res)); else __asm__ __volatile__( ".set\tmips32\n\t" "mfc0\t%0, " #source ", " #sel "\n\t" ".set\tmips0\n\t" : "=r" (__res)); __res; })
+# 660 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+#define __read_64bit_c0_register(source,sel) ({ unsigned long long __res; if (sizeof(unsigned long) == 4) __res = __read_64bit_c0_split(source, sel); else if (sel == 0) __asm__ __volatile__( ".set\tmips3\n\t" "dmfc0\t%0, " #source "\n\t" ".set\tmips0" : "=r" (__res)); else __asm__ __volatile__( ".set\tmips64\n\t" "dmfc0\t%0, " #source ", " #sel "\n\t" ".set\tmips0" : "=r" (__res)); __res; })
+# 679 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+#define __write_32bit_c0_register(register,sel,value) do { if (sel == 0) __asm__ __volatile__( "mtc0\t%z0, " #register "\n\t" : : "Jr" ((unsigned int)(value))); else __asm__ __volatile__( ".set\tmips32\n\t" "mtc0\t%z0, " #register ", " #sel "\n\t" ".set\tmips0" : : "Jr" ((unsigned int)(value))); } while (0)
+# 693 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+#define __write_64bit_c0_register(register,sel,value) do { if (sizeof(unsigned long) == 4) __write_64bit_c0_split(register, sel, value); else if (sel == 0) __asm__ __volatile__( ".set\tmips3\n\t" "dmtc0\t%z0, " #register "\n\t" ".set\tmips0" : : "Jr" (value)); else __asm__ __volatile__( ".set\tmips64\n\t" "dmtc0\t%z0, " #register ", " #sel "\n\t" ".set\tmips0" : : "Jr" (value)); } while (0)
+# 711 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+#define __read_ulong_c0_register(reg,sel) ((sizeof(unsigned long) == 4) ? (unsigned long) __read_32bit_c0_register(reg, sel) : (unsigned long) __read_64bit_c0_register(reg, sel))
+
+
+
+
+#define __write_ulong_c0_register(reg,sel,val) do { if (sizeof(unsigned long) == 4) __write_32bit_c0_register(reg, sel, val); else __write_64bit_c0_register(reg, sel, val); } while (0)
+
+
+
+
+
+
+
+/*
+ * On RM7000/RM9000 these are uses to access cop0 set 1 registers
+ */
+#define __read_32bit_c0_ctrl_register(source) ({ int __res; __asm__ __volatile__( "cfc0\t%0, " #source "\n\t" : "=r" (__res)); __res; })
+
+
+
+
+
+
+
+#define __write_32bit_c0_ctrl_register(register,value) do { __asm__ __volatile__( "ctc0\t%z0, " #register "\n\t" : : "Jr" ((unsigned int)(value))); } while (0)
+
+
+
+
+
+
+/*
+ * These versions are only needed for systems with more than 38 bits of
+ * physical address space running the 32-bit kernel.  That's none atm :-)
+ */
+#define __read_64bit_c0_split(source,sel) ({ unsigned long long __val; unsigned long __flags; local_irq_save(__flags); if (sel == 0) __asm__ __volatile__( ".set\tmips64\n\t" "dmfc0\t%M0, " #source "\n\t" "dsll\t%L0, %M0, 32\n\t" "dsra\t%M0, %M0, 32\n\t" "dsra\t%L0, %L0, 32\n\t" ".set\tmips0" : "=r" (__val)); else __asm__ __volatile__( ".set\tmips64\n\t" "dmfc0\t%M0, " #source ", " #sel "\n\t" "dsll\t%L0, %M0, 32\n\t" "dsra\t%M0, %M0, 32\n\t" "dsra\t%L0, %L0, 32\n\t" ".set\tmips0" : "=r" (__val)); local_irq_restore(__flags); __val; })
+# 775 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+#define __write_64bit_c0_split(source,sel,val) do { unsigned long __flags; local_irq_save(__flags); if (sel == 0) __asm__ __volatile__( ".set\tmips64\n\t" "dsll\t%L0, %L0, 32\n\t" "dsrl\t%L0, %L0, 32\n\t" "dsll\t%M0, %M0, 32\n\t" "or\t%L0, %L0, %M0\n\t" "dmtc0\t%L0, " #source "\n\t" ".set\tmips0" : : "r" (val)); else __asm__ __volatile__( ".set\tmips64\n\t" "dsll\t%L0, %L0, 32\n\t" "dsrl\t%L0, %L0, 32\n\t" "dsll\t%M0, %M0, 32\n\t" "or\t%L0, %L0, %M0\n\t" "dmtc0\t%L0, " #source ", " #sel "\n\t" ".set\tmips0" : : "r" (val)); local_irq_restore(__flags); } while (0)
+# 803 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+#define read_c0_index() __read_32bit_c0_register($0, 0)
+#define write_c0_index(val) __write_32bit_c0_register($0, 0, val)
+
+#define read_c0_random() __read_32bit_c0_register($1, 0)
+#define write_c0_random(val) __write_32bit_c0_register($1, 0, val)
+
+#define read_c0_entrylo0() __read_ulong_c0_register($2, 0)
+#define write_c0_entrylo0(val) __write_ulong_c0_register($2, 0, val)
+
+#define read_c0_entrylo1() __read_ulong_c0_register($3, 0)
+#define write_c0_entrylo1(val) __write_ulong_c0_register($3, 0, val)
+
+#define read_c0_conf() __read_32bit_c0_register($3, 0)
+#define write_c0_conf(val) __write_32bit_c0_register($3, 0, val)
+
+#define read_c0_context() __read_ulong_c0_register($4, 0)
+#define write_c0_context(val) __write_ulong_c0_register($4, 0, val)
+
+#define read_c0_userlocal() __read_ulong_c0_register($4, 2)
+#define write_c0_userlocal(val) __write_ulong_c0_register($4, 2, val)
+
+#define read_c0_pagemask() __read_32bit_c0_register($5, 0)
+#define write_c0_pagemask(val) __write_32bit_c0_register($5, 0, val)
+
+#define read_c0_wired() __read_32bit_c0_register($6, 0)
+#define write_c0_wired(val) __write_32bit_c0_register($6, 0, val)
+
+#define read_c0_info() __read_32bit_c0_register($7, 0)
+
+#define read_c0_cache() __read_32bit_c0_register($7, 0)
+#define write_c0_cache(val) __write_32bit_c0_register($7, 0, val)
+
+#define read_c0_badvaddr() __read_ulong_c0_register($8, 0)
+#define write_c0_badvaddr(val) __write_ulong_c0_register($8, 0, val)
+
+#define read_c0_count() __read_32bit_c0_register($9, 0)
+#define write_c0_count(val) __write_32bit_c0_register($9, 0, val)
+
+#define read_c0_count2() __read_32bit_c0_register($9, 6)
+#define write_c0_count2(val) __write_32bit_c0_register($9, 6, val)
+
+#define read_c0_count3() __read_32bit_c0_register($9, 7)
+#define write_c0_count3(val) __write_32bit_c0_register($9, 7, val)
+
+#define read_c0_entryhi() __read_ulong_c0_register($10, 0)
+#define write_c0_entryhi(val) __write_ulong_c0_register($10, 0, val)
+
+#define read_c0_compare() __read_32bit_c0_register($11, 0)
+#define write_c0_compare(val) __write_32bit_c0_register($11, 0, val)
+
+#define read_c0_compare2() __read_32bit_c0_register($11, 6)
+#define write_c0_compare2(val) __write_32bit_c0_register($11, 6, val)
+
+#define read_c0_compare3() __read_32bit_c0_register($11, 7)
+#define write_c0_compare3(val) __write_32bit_c0_register($11, 7, val)
+
+#define read_c0_status() __read_32bit_c0_register($12, 0)
+
+
+
+
+
+
+
+/*
+ * Legacy non-SMTC code, which may be hazardous
+ * but which might not support EHB
+ */
+#define write_c0_status(val) __write_32bit_c0_register($12, 0, val)
+
+
+#define read_c0_cause() __read_32bit_c0_register($13, 0)
+#define write_c0_cause(val) __write_32bit_c0_register($13, 0, val)
+
+#define read_c0_epc() __read_ulong_c0_register($14, 0)
+#define write_c0_epc(val) __write_ulong_c0_register($14, 0, val)
+
+#define read_c0_prid() __read_32bit_c0_register($15, 0)
+
+#define read_c0_config() __read_32bit_c0_register($16, 0)
+#define read_c0_config1() __read_32bit_c0_register($16, 1)
+#define read_c0_config2() __read_32bit_c0_register($16, 2)
+#define read_c0_config3() __read_32bit_c0_register($16, 3)
+#define read_c0_config4() __read_32bit_c0_register($16, 4)
+#define read_c0_config5() __read_32bit_c0_register($16, 5)
+#define read_c0_config6() __read_32bit_c0_register($16, 6)
+#define read_c0_config7() __read_32bit_c0_register($16, 7)
+#define write_c0_config(val) __write_32bit_c0_register($16, 0, val)
+#define write_c0_config1(val) __write_32bit_c0_register($16, 1, val)
+#define write_c0_config2(val) __write_32bit_c0_register($16, 2, val)
+#define write_c0_config3(val) __write_32bit_c0_register($16, 3, val)
+#define write_c0_config4(val) __write_32bit_c0_register($16, 4, val)
+#define write_c0_config5(val) __write_32bit_c0_register($16, 5, val)
+#define write_c0_config6(val) __write_32bit_c0_register($16, 6, val)
+#define write_c0_config7(val) __write_32bit_c0_register($16, 7, val)
+
+/*
+ * The WatchLo register.  There may be upto 8 of them.
+ */
+#define read_c0_watchlo0() __read_ulong_c0_register($18, 0)
+#define read_c0_watchlo1() __read_ulong_c0_register($18, 1)
+#define read_c0_watchlo2() __read_ulong_c0_register($18, 2)
+#define read_c0_watchlo3() __read_ulong_c0_register($18, 3)
+#define read_c0_watchlo4() __read_ulong_c0_register($18, 4)
+#define read_c0_watchlo5() __read_ulong_c0_register($18, 5)
+#define read_c0_watchlo6() __read_ulong_c0_register($18, 6)
+#define read_c0_watchlo7() __read_ulong_c0_register($18, 7)
+#define write_c0_watchlo0(val) __write_ulong_c0_register($18, 0, val)
+#define write_c0_watchlo1(val) __write_ulong_c0_register($18, 1, val)
+#define write_c0_watchlo2(val) __write_ulong_c0_register($18, 2, val)
+#define write_c0_watchlo3(val) __write_ulong_c0_register($18, 3, val)
+#define write_c0_watchlo4(val) __write_ulong_c0_register($18, 4, val)
+#define write_c0_watchlo5(val) __write_ulong_c0_register($18, 5, val)
+#define write_c0_watchlo6(val) __write_ulong_c0_register($18, 6, val)
+#define write_c0_watchlo7(val) __write_ulong_c0_register($18, 7, val)
+
+/*
+ * The WatchHi register.  There may be upto 8 of them.
+ */
+#define read_c0_watchhi0() __read_32bit_c0_register($19, 0)
+#define read_c0_watchhi1() __read_32bit_c0_register($19, 1)
+#define read_c0_watchhi2() __read_32bit_c0_register($19, 2)
+#define read_c0_watchhi3() __read_32bit_c0_register($19, 3)
+#define read_c0_watchhi4() __read_32bit_c0_register($19, 4)
+#define read_c0_watchhi5() __read_32bit_c0_register($19, 5)
+#define read_c0_watchhi6() __read_32bit_c0_register($19, 6)
+#define read_c0_watchhi7() __read_32bit_c0_register($19, 7)
+
+#define write_c0_watchhi0(val) __write_32bit_c0_register($19, 0, val)
+#define write_c0_watchhi1(val) __write_32bit_c0_register($19, 1, val)
+#define write_c0_watchhi2(val) __write_32bit_c0_register($19, 2, val)
+#define write_c0_watchhi3(val) __write_32bit_c0_register($19, 3, val)
+#define write_c0_watchhi4(val) __write_32bit_c0_register($19, 4, val)
+#define write_c0_watchhi5(val) __write_32bit_c0_register($19, 5, val)
+#define write_c0_watchhi6(val) __write_32bit_c0_register($19, 6, val)
+#define write_c0_watchhi7(val) __write_32bit_c0_register($19, 7, val)
+
+#define read_c0_xcontext() __read_ulong_c0_register($20, 0)
+#define write_c0_xcontext(val) __write_ulong_c0_register($20, 0, val)
+
+#define read_c0_intcontrol() __read_32bit_c0_ctrl_register($20)
+#define write_c0_intcontrol(val) __write_32bit_c0_ctrl_register($20, val)
+
+#define read_c0_framemask() __read_32bit_c0_register($21, 0)
+#define write_c0_framemask(val) __write_32bit_c0_register($21, 0, val)
+
+/* RM9000 PerfControl performance counter control register */
+#define read_c0_perfcontrol() __read_32bit_c0_register($22, 0)
+#define write_c0_perfcontrol(val) __write_32bit_c0_register($22, 0, val)
+
+#define read_c0_diag() __read_32bit_c0_register($22, 0)
+#define write_c0_diag(val) __write_32bit_c0_register($22, 0, val)
+
+#define read_c0_diag1() __read_32bit_c0_register($22, 1)
+#define write_c0_diag1(val) __write_32bit_c0_register($22, 1, val)
+
+#define read_c0_diag2() __read_32bit_c0_register($22, 2)
+#define write_c0_diag2(val) __write_32bit_c0_register($22, 2, val)
+
+#define read_c0_diag3() __read_32bit_c0_register($22, 3)
+#define write_c0_diag3(val) __write_32bit_c0_register($22, 3, val)
+
+#define read_c0_diag4() __read_32bit_c0_register($22, 4)
+#define write_c0_diag4(val) __write_32bit_c0_register($22, 4, val)
+
+#define read_c0_diag5() __read_32bit_c0_register($22, 5)
+#define write_c0_diag5(val) __write_32bit_c0_register($22, 5, val)
+
+#define read_c0_debug() __read_32bit_c0_register($23, 0)
+#define write_c0_debug(val) __write_32bit_c0_register($23, 0, val)
+
+#define read_c0_depc() __read_ulong_c0_register($24, 0)
+#define write_c0_depc(val) __write_ulong_c0_register($24, 0, val)
+
+/*
+ * MIPS32 / MIPS64 performance counters
+ */
+#define read_c0_perfctrl0() __read_32bit_c0_register($25, 0)
+#define write_c0_perfctrl0(val) __write_32bit_c0_register($25, 0, val)
+#define read_c0_perfcntr0() __read_32bit_c0_register($25, 1)
+#define write_c0_perfcntr0(val) __write_32bit_c0_register($25, 1, val)
+#define read_c0_perfctrl1() __read_32bit_c0_register($25, 2)
+#define write_c0_perfctrl1(val) __write_32bit_c0_register($25, 2, val)
+#define read_c0_perfcntr1() __read_32bit_c0_register($25, 3)
+#define write_c0_perfcntr1(val) __write_32bit_c0_register($25, 3, val)
+#define read_c0_perfctrl2() __read_32bit_c0_register($25, 4)
+#define write_c0_perfctrl2(val) __write_32bit_c0_register($25, 4, val)
+#define read_c0_perfcntr2() __read_32bit_c0_register($25, 5)
+#define write_c0_perfcntr2(val) __write_32bit_c0_register($25, 5, val)
+#define read_c0_perfctrl3() __read_32bit_c0_register($25, 6)
+#define write_c0_perfctrl3(val) __write_32bit_c0_register($25, 6, val)
+#define read_c0_perfcntr3() __read_32bit_c0_register($25, 7)
+#define write_c0_perfcntr3(val) __write_32bit_c0_register($25, 7, val)
+
+/* RM9000 PerfCount performance counter register */
+#define read_c0_perfcount() __read_64bit_c0_register($25, 0)
+#define write_c0_perfcount(val) __write_64bit_c0_register($25, 0, val)
+
+#define read_c0_ecc() __read_32bit_c0_register($26, 0)
+#define write_c0_ecc(val) __write_32bit_c0_register($26, 0, val)
+
+#define read_c0_derraddr0() __read_ulong_c0_register($26, 1)
+#define write_c0_derraddr0(val) __write_ulong_c0_register($26, 1, val)
+
+#define read_c0_cacheerr() __read_32bit_c0_register($27, 0)
+
+#define read_c0_derraddr1() __read_ulong_c0_register($27, 1)
+#define write_c0_derraddr1(val) __write_ulong_c0_register($27, 1, val)
+
+#define read_c0_taglo() __read_32bit_c0_register($28, 0)
+#define write_c0_taglo(val) __write_32bit_c0_register($28, 0, val)
+
+#define read_c0_dtaglo() __read_32bit_c0_register($28, 2)
+#define write_c0_dtaglo(val) __write_32bit_c0_register($28, 2, val)
+
+#define read_c0_taghi() __read_32bit_c0_register($29, 0)
+#define write_c0_taghi(val) __write_32bit_c0_register($29, 0, val)
+
+#define read_c0_errorepc() __read_ulong_c0_register($30, 0)
+#define write_c0_errorepc(val) __write_ulong_c0_register($30, 0, val)
+
+/* MIPSR2 */
+#define read_c0_hwrena() __read_32bit_c0_register($7, 0)
+#define write_c0_hwrena(val) __write_32bit_c0_register($7, 0, val)
+
+#define read_c0_intctl() __read_32bit_c0_register($12, 1)
+#define write_c0_intctl(val) __write_32bit_c0_register($12, 1, val)
+
+#define read_c0_srsctl() __read_32bit_c0_register($12, 2)
+#define write_c0_srsctl(val) __write_32bit_c0_register($12, 2, val)
+
+#define read_c0_srsmap() __read_32bit_c0_register($12, 3)
+#define write_c0_srsmap(val) __write_32bit_c0_register($12, 3, val)
+
+#define read_c0_ebase() __read_32bit_c0_register($15, 1)
+#define write_c0_ebase(val) __write_32bit_c0_register($15, 1, val)
+
+
+/* Cavium OCTEON (cnMIPS) */
+#define read_c0_cvmcount() __read_ulong_c0_register($9, 6)
+#define write_c0_cvmcount(val) __write_ulong_c0_register($9, 6, val)
+
+#define read_c0_cvmctl() __read_64bit_c0_register($9, 7)
+#define write_c0_cvmctl(val) __write_64bit_c0_register($9, 7, val)
+
+#define read_c0_cvmmemctl() __read_64bit_c0_register($11, 7)
+#define write_c0_cvmmemctl(val) __write_64bit_c0_register($11, 7, val)
+/*
+ * The cacheerr registers are not standardized.  On OCTEON, they are
+ * 64 bits wide.
+ */
+#define read_octeon_c0_icacheerr() __read_64bit_c0_register($27, 0)
+#define write_octeon_c0_icacheerr(val) __write_64bit_c0_register($27, 0, val)
+
+#define read_octeon_c0_dcacheerr() __read_64bit_c0_register($27, 1)
+#define write_octeon_c0_dcacheerr(val) __write_64bit_c0_register($27, 1, val)
+
+/*
+ * Macros to access the floating point coprocessor control registers
+ */
+#define read_32bit_cp1_register(source) ({ int __res; __asm__ __volatile__( ".set\tpush\n\t" ".set\treorder\n\t" ".set\tmips1\n\t" "cfc1\t%0,"STR(source)"\n\t" ".set\tpop" : "=r" (__res)); __res;})
+# 1075 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+#define rddsp(mask) ({ unsigned int __res; __asm__ __volatile__( "	.set	push				\n" "	.set	noat				\n" "	# rddsp $1, %x1				\n" "	.word	0x7c000cb8 | (%x1 << 16)	\n" "	move	%0, $1				\n" "	.set	pop				\n" : "=r" (__res) : "i" (mask)); __res; })
+# 1091 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+#define wrdsp(val,mask) do { __asm__ __volatile__( "	.set	push					\n" "	.set	noat					\n" "	move	$1, %0					\n" "	# wrdsp $1, %x1					\n" "	.word	0x7c2004f8 | (%x1 << 11)		\n" "	.set	pop					\n" : : "r" (val), "i" (mask)); } while (0)
+# 1127 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+#define mfhi0() ({ unsigned long __treg; __asm__ __volatile__( "	.set	push			\n" "	.set	noat			\n" "	# mfhi	%0, $ac0		\n" "	.word	0x00000810		\n" "	move	%0, $1			\n" "	.set	pop			\n" : "=r" (__treg)); __treg; })
+# 1142 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+#define mfhi1() ({ unsigned long __treg; __asm__ __volatile__( "	.set	push			\n" "	.set	noat			\n" "	# mfhi	%0, $ac1		\n" "	.word	0x00200810		\n" "	move	%0, $1			\n" "	.set	pop			\n" : "=r" (__treg)); __treg; })
+# 1157 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+#define mfhi2() ({ unsigned long __treg; __asm__ __volatile__( "	.set	push			\n" "	.set	noat			\n" "	# mfhi	%0, $ac2		\n" "	.word	0x00400810		\n" "	move	%0, $1			\n" "	.set	pop			\n" : "=r" (__treg)); __treg; })
+# 1172 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+#define mfhi3() ({ unsigned long __treg; __asm__ __volatile__( "	.set	push			\n" "	.set	noat			\n" "	# mfhi	%0, $ac3		\n" "	.word	0x00600810		\n" "	move	%0, $1			\n" "	.set	pop			\n" : "=r" (__treg)); __treg; })
+# 1187 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+#define mflo0() ({ unsigned long __treg; __asm__ __volatile__( "	.set	push			\n" "	.set	noat			\n" "	# mflo	%0, $ac0		\n" "	.word	0x00000812		\n" "	move	%0, $1			\n" "	.set	pop			\n" : "=r" (__treg)); __treg; })
+# 1202 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+#define mflo1() ({ unsigned long __treg; __asm__ __volatile__( "	.set	push			\n" "	.set	noat			\n" "	# mflo	%0, $ac1		\n" "	.word	0x00200812		\n" "	move	%0, $1			\n" "	.set	pop			\n" : "=r" (__treg)); __treg; })
+# 1217 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+#define mflo2() ({ unsigned long __treg; __asm__ __volatile__( "	.set	push			\n" "	.set	noat			\n" "	# mflo	%0, $ac2		\n" "	.word	0x00400812		\n" "	move	%0, $1			\n" "	.set	pop			\n" : "=r" (__treg)); __treg; })
+# 1232 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+#define mflo3() ({ unsigned long __treg; __asm__ __volatile__( "	.set	push			\n" "	.set	noat			\n" "	# mflo	%0, $ac3		\n" "	.word	0x00600812		\n" "	move	%0, $1			\n" "	.set	pop			\n" : "=r" (__treg)); __treg; })
+# 1247 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+#define mthi0(x) do { __asm__ __volatile__( "	.set	push					\n" "	.set	noat					\n" "	move	$1, %0					\n" "	# mthi	$1, $ac0				\n" "	.word	0x00200011				\n" "	.set	pop					\n" : : "r" (x)); } while (0)
+# 1260 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+#define mthi1(x) do { __asm__ __volatile__( "	.set	push					\n" "	.set	noat					\n" "	move	$1, %0					\n" "	# mthi	$1, $ac1				\n" "	.word	0x00200811				\n" "	.set	pop					\n" : : "r" (x)); } while (0)
+# 1273 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+#define mthi2(x) do { __asm__ __volatile__( "	.set	push					\n" "	.set	noat					\n" "	move	$1, %0					\n" "	# mthi	$1, $ac2				\n" "	.word	0x00201011				\n" "	.set	pop					\n" : : "r" (x)); } while (0)
+# 1286 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+#define mthi3(x) do { __asm__ __volatile__( "	.set	push					\n" "	.set	noat					\n" "	move	$1, %0					\n" "	# mthi	$1, $ac3				\n" "	.word	0x00201811				\n" "	.set	pop					\n" : : "r" (x)); } while (0)
+# 1299 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+#define mtlo0(x) do { __asm__ __volatile__( "	.set	push					\n" "	.set	noat					\n" "	move	$1, %0					\n" "	# mtlo	$1, $ac0				\n" "	.word	0x00200013				\n" "	.set	pop					\n" : : "r" (x)); } while (0)
+# 1312 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+#define mtlo1(x) do { __asm__ __volatile__( "	.set	push					\n" "	.set	noat					\n" "	move	$1, %0					\n" "	# mtlo	$1, $ac1				\n" "	.word	0x00200813				\n" "	.set	pop					\n" : : "r" (x)); } while (0)
+# 1325 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+#define mtlo2(x) do { __asm__ __volatile__( "	.set	push					\n" "	.set	noat					\n" "	move	$1, %0					\n" "	# mtlo	$1, $ac2				\n" "	.word	0x00201013				\n" "	.set	pop					\n" : : "r" (x)); } while (0)
+# 1338 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+#define mtlo3(x) do { __asm__ __volatile__( "	.set	push					\n" "	.set	noat					\n" "	move	$1, %0					\n" "	# mtlo	$1, $ac3				\n" "	.word	0x00201813				\n" "	.set	pop					\n" : : "r" (x)); } while (0)
+# 1353 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+/*
+ * TLB operations.
+ *
+ * It is responsibility of the caller to take care of any TLB hazards.
+ */
+static inline void tlb_probe(void)
+{
+ __asm__ __volatile__(
+  ".set noreorder\n\t"
+  "tlbp\n\t"
+  ".set reorder");
+}
+
+static inline void tlb_read(void)
+{
+# 1385 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+ __asm__ __volatile__(
+  ".set noreorder\n\t"
+  "tlbr\n\t"
+  ".set reorder");
+# 1401 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+}
+# 1413 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+static inline void tlb_write_random(void)
+{
+ __asm__ __volatile__(
+  ".set noreorder\n\t"
+  "tlbwr\n\t"
+  ".set reorder");
+}
+
+/*
+ * Manipulate bits in a c0 register.
+ */
+
+/*
+ * SMTC Linux requires shutting-down microthread scheduling
+ * during CP0 register read-modify-write sequences.
+ */
+#define __BUILD_SET_C0(name) static inline unsigned int set_c0_ ##name(unsigned int set) { unsigned int res, new; res = read_c0_ ##name(); new = res | set; write_c0_ ##name(new); return res; } static inline unsigned int clear_c0_ ##name(unsigned int clear) { unsigned int res, new; res = read_c0_ ##name(); new = res & ~clear; write_c0_ ##name(new); return res; } static inline unsigned int change_c0_ ##name(unsigned int change, unsigned int val) { unsigned int res, new; res = read_c0_ ##name(); new = res & ~change; new |= (val & change); write_c0_ ##name(new); return res; }
+# 1582 "/loongson/ejtag-debug/bin/include/asm/mipsregs.h"
+static inline unsigned int set_c0_status(unsigned int set) { unsigned int res, new; res = ({ int __res; if (0 == 0) __asm__ __volatile__( "mfc0\t%0, " "$12" "\n\t" : "=r" (__res)); else __asm__ __volatile__( ".set\tmips32\n\t" "mfc0\t%0, " "$12" ", " "0" "\n\t" ".set\tmips0\n\t" : "=r" (__res)); __res; }); new = res | set; do { if (0 == 0) __asm__ __volatile__( "mtc0\t%z0, " "$12" "\n\t" : : "Jr" ((unsigned int)(new))); else __asm__ __volatile__( ".set\tmips32\n\t" "mtc0\t%z0, " "$12" ", " "0" "\n\t" ".set\tmips0" : : "Jr" ((unsigned int)(new))); } while (0); return res; } static inline unsigned int clear_c0_status(unsigned int clear) { unsigned int res, new; res = ({ int __res; if (0 == 0) __asm__ __volatile__( "mfc0\t%0, " "$12" "\n\t" : "=r" (__res)); else __asm__ __volatile__( ".set\tmips32\n\t" "mfc0\t%0, " "$12" ", " "0" "\n\t" ".set\tmips0\n\t" : "=r" (__res)); __res; }); new = res & ~clear; do { if (0 == 0) __asm__ __volatile__( "mtc0\t%z0, " "$12" "\n\t" : : "Jr" ((unsigned int)(new))); else __asm__ __volatile__( ".set\tmips32\n\t" "mtc0\t%z0, " "$12" ", " "0" "\n\t" ".set\tmips0" : : "Jr" ((unsigned int)(new))); } while (0); return res; } static inline unsigned int change_c0_status(unsigned int change, unsigned int val) { unsigned int res, new; res = ({ int __res; if (0 == 0) __asm__ __volatile__( "mfc0\t%0, " "$12" "\n\t" : "=r" (__res)); else __asm__ __volatile__( ".set\tmips32\n\t" "mfc0\t%0, " "$12" ", " "0" "\n\t" ".set\tmips0\n\t" : "=r" (__res)); __res; }); new = res & ~change; new |= (val & change); do { if (0 == 0) __asm__ __volatile__( "mtc0\t%z0, " "$12" "\n\t" : : "Jr" ((unsigned int)(new))); else __asm__ __volatile__( ".set\tmips32\n\t" "mtc0\t%z0, " "$12" ", " "0" "\n\t" ".set\tmips0" : : "Jr" ((unsigned int)(new))); } while (0); return res; }
+static inline unsigned int set_c0_cause(unsigned int set) { unsigned int res, new; res = ({ int __res; if (0 == 0) __asm__ __volatile__( "mfc0\t%0, " "$13" "\n\t" : "=r" (__res)); else __asm__ __volatile__( ".set\tmips32\n\t" "mfc0\t%0, " "$13" ", " "0" "\n\t" ".set\tmips0\n\t" : "=r" (__res)); __res; }); new = res | set; do { if (0 == 0) __asm__ __volatile__( "mtc0\t%z0, " "$13" "\n\t" : : "Jr" ((unsigned int)(new))); else __asm__ __volatile__( ".set\tmips32\n\t" "mtc0\t%z0, " "$13" ", " "0" "\n\t" ".set\tmips0" : : "Jr" ((unsigned int)(new))); } while (0); return res; } static inline unsigned int clear_c0_cause(unsigned int clear) { unsigned int res, new; res = ({ int __res; if (0 == 0) __asm__ __volatile__( "mfc0\t%0, " "$13" "\n\t" : "=r" (__res)); else __asm__ __volatile__( ".set\tmips32\n\t" "mfc0\t%0, " "$13" ", " "0" "\n\t" ".set\tmips0\n\t" : "=r" (__res)); __res; }); new = res & ~clear; do { if (0 == 0) __asm__ __volatile__( "mtc0\t%z0, " "$13" "\n\t" : : "Jr" ((unsigned int)(new))); else __asm__ __volatile__( ".set\tmips32\n\t" "mtc0\t%z0, " "$13" ", " "0" "\n\t" ".set\tmips0" : : "Jr" ((unsigned int)(new))); } while (0); return res; } static inline unsigned int change_c0_cause(unsigned int change, unsigned int val) { unsigned int res, new; res = ({ int __res; if (0 == 0) __asm__ __volatile__( "mfc0\t%0, " "$13" "\n\t" : "=r" (__res)); else __asm__ __volatile__( ".set\tmips32\n\t" "mfc0\t%0, " "$13" ", " "0" "\n\t" ".set\tmips0\n\t" : "=r" (__res)); __res; }); new = res & ~change; new |= (val & change); do { if (0 == 0) __asm__ __volatile__( "mtc0\t%z0, " "$13" "\n\t" : : "Jr" ((unsigned int)(new))); else __asm__ __volatile__( ".set\tmips32\n\t" "mtc0\t%z0, " "$13" ", " "0" "\n\t" ".set\tmips0" : : "Jr" ((unsigned int)(new))); } while (0); return res; }
+static inline unsigned int set_c0_config(unsigned int set) { unsigned int res, new; res = ({ int __res; if (0 == 0) __asm__ __volatile__( "mfc0\t%0, " "$16" "\n\t" : "=r" (__res)); else __asm__ __volatile__( ".set\tmips32\n\t" "mfc0\t%0, " "$16" ", " "0" "\n\t" ".set\tmips0\n\t" : "=r" (__res)); __res; }); new = res | set; do { if (0 == 0) __asm__ __volatile__( "mtc0\t%z0, " "$16" "\n\t" : : "Jr" ((unsigned int)(new))); else __asm__ __volatile__( ".set\tmips32\n\t" "mtc0\t%z0, " "$16" ", " "0" "\n\t" ".set\tmips0" : : "Jr" ((unsigned int)(new))); } while (0); return res; } static inline unsigned int clear_c0_config(unsigned int clear) { unsigned int res, new; res = ({ int __res; if (0 == 0) __asm__ __volatile__( "mfc0\t%0, " "$16" "\n\t" : "=r" (__res)); else __asm__ __volatile__( ".set\tmips32\n\t" "mfc0\t%0, " "$16" ", " "0" "\n\t" ".set\tmips0\n\t" : "=r" (__res)); __res; }); new = res & ~clear; do { if (0 == 0) __asm__ __volatile__( "mtc0\t%z0, " "$16" "\n\t" : : "Jr" ((unsigned int)(new))); else __asm__ __volatile__( ".set\tmips32\n\t" "mtc0\t%z0, " "$16" ", " "0" "\n\t" ".set\tmips0" : : "Jr" ((unsigned int)(new))); } while (0); return res; } static inline unsigned int change_c0_config(unsigned int change, unsigned int val) { unsigned int res, new; res = ({ int __res; if (0 == 0) __asm__ __volatile__( "mfc0\t%0, " "$16" "\n\t" : "=r" (__res)); else __asm__ __volatile__( ".set\tmips32\n\t" "mfc0\t%0, " "$16" ", " "0" "\n\t" ".set\tmips0\n\t" : "=r" (__res)); __res; }); new = res & ~change; new |= (val & change); do { if (0 == 0) __asm__ __volatile__( "mtc0\t%z0, " "$16" "\n\t" : : "Jr" ((unsigned int)(new))); else __asm__ __volatile__( ".set\tmips32\n\t" "mtc0\t%z0, " "$16" ", " "0" "\n\t" ".set\tmips0" : : "Jr" ((unsigned int)(new))); } while (0); return res; }
+static inline unsigned int set_c0_intcontrol(unsigned int set) { unsigned int res, new; res = ({ int __res; __asm__ __volatile__( "cfc0\t%0, " "$20" "\n\t" : "=r" (__res)); __res; }); new = res | set; do { __asm__ __volatile__( "ctc0\t%z0, " "$20" "\n\t" : : "Jr" ((unsigned int)(new))); } while (0); return res; } static inline unsigned int clear_c0_intcontrol(unsigned int clear) { unsigned int res, new; res = ({ int __res; __asm__ __volatile__( "cfc0\t%0, " "$20" "\n\t" : "=r" (__res)); __res; }); new = res & ~clear; do { __asm__ __volatile__( "ctc0\t%z0, " "$20" "\n\t" : : "Jr" ((unsigned int)(new))); } while (0); return res; } static inline unsigned int change_c0_intcontrol(unsigned int change, unsigned int val) { unsigned int res, new; res = ({ int __res; __asm__ __volatile__( "cfc0\t%0, " "$20" "\n\t" : "=r" (__res)); __res; }); new = res & ~change; new |= (val & change); do { __asm__ __volatile__( "ctc0\t%z0, " "$20" "\n\t" : : "Jr" ((unsigned int)(new))); } while (0); return res; }
+static inline unsigned int set_c0_intctl(unsigned int set) { unsigned int res, new; res = ({ int __res; if (1 == 0) __asm__ __volatile__( "mfc0\t%0, " "$12" "\n\t" : "=r" (__res)); else __asm__ __volatile__( ".set\tmips32\n\t" "mfc0\t%0, " "$12" ", " "1" "\n\t" ".set\tmips0\n\t" : "=r" (__res)); __res; }); new = res | set; do { if (1 == 0) __asm__ __volatile__( "mtc0\t%z0, " "$12" "\n\t" : : "Jr" ((unsigned int)(new))); else __asm__ __volatile__( ".set\tmips32\n\t" "mtc0\t%z0, " "$12" ", " "1" "\n\t" ".set\tmips0" : : "Jr" ((unsigned int)(new))); } while (0); return res; } static inline unsigned int clear_c0_intctl(unsigned int clear) { unsigned int res, new; res = ({ int __res; if (1 == 0) __asm__ __volatile__( "mfc0\t%0, " "$12" "\n\t" : "=r" (__res)); else __asm__ __volatile__( ".set\tmips32\n\t" "mfc0\t%0, " "$12" ", " "1" "\n\t" ".set\tmips0\n\t" : "=r" (__res)); __res; }); new = res & ~clear; do { if (1 == 0) __asm__ __volatile__( "mtc0\t%z0, " "$12" "\n\t" : : "Jr" ((unsigned int)(new))); else __asm__ __volatile__( ".set\tmips32\n\t" "mtc0\t%z0, " "$12" ", " "1" "\n\t" ".set\tmips0" : : "Jr" ((unsigned int)(new))); } while (0); return res; } static inline unsigned int change_c0_intctl(unsigned int change, unsigned int val) { unsigned int res, new; res = ({ int __res; if (1 == 0) __asm__ __volatile__( "mfc0\t%0, " "$12" "\n\t" : "=r" (__res)); else __asm__ __volatile__( ".set\tmips32\n\t" "mfc0\t%0, " "$12" ", " "1" "\n\t" ".set\tmips0\n\t" : "=r" (__res)); __res; }); new = res & ~change; new |= (val & change); do { if (1 == 0) __asm__ __volatile__( "mtc0\t%z0, " "$12" "\n\t" : : "Jr" ((unsigned int)(new))); else __asm__ __volatile__( ".set\tmips32\n\t" "mtc0\t%z0, " "$12" ", " "1" "\n\t" ".set\tmips0" : : "Jr" ((unsigned int)(new))); } while (0); return res; }
+static inline unsigned int set_c0_srsmap(unsigned int set) { unsigned int res, new; res = ({ int __res; if (3 == 0) __asm__ __volatile__( "mfc0\t%0, " "$12" "\n\t" : "=r" (__res)); else __asm__ __volatile__( ".set\tmips32\n\t" "mfc0\t%0, " "$12" ", " "3" "\n\t" ".set\tmips0\n\t" : "=r" (__res)); __res; }); new = res | set; do { if (3 == 0) __asm__ __volatile__( "mtc0\t%z0, " "$12" "\n\t" : : "Jr" ((unsigned int)(new))); else __asm__ __volatile__( ".set\tmips32\n\t" "mtc0\t%z0, " "$12" ", " "3" "\n\t" ".set\tmips0" : : "Jr" ((unsigned int)(new))); } while (0); return res; } static inline unsigned int clear_c0_srsmap(unsigned int clear) { unsigned int res, new; res = ({ int __res; if (3 == 0) __asm__ __volatile__( "mfc0\t%0, " "$12" "\n\t" : "=r" (__res)); else __asm__ __volatile__( ".set\tmips32\n\t" "mfc0\t%0, " "$12" ", " "3" "\n\t" ".set\tmips0\n\t" : "=r" (__res)); __res; }); new = res & ~clear; do { if (3 == 0) __asm__ __volatile__( "mtc0\t%z0, " "$12" "\n\t" : : "Jr" ((unsigned int)(new))); else __asm__ __volatile__( ".set\tmips32\n\t" "mtc0\t%z0, " "$12" ", " "3" "\n\t" ".set\tmips0" : : "Jr" ((unsigned int)(new))); } while (0); return res; } static inline unsigned int change_c0_srsmap(unsigned int change, unsigned int val) { unsigned int res, new; res = ({ int __res; if (3 == 0) __asm__ __volatile__( "mfc0\t%0, " "$12" "\n\t" : "=r" (__res)); else __asm__ __volatile__( ".set\tmips32\n\t" "mfc0\t%0, " "$12" ", " "3" "\n\t" ".set\tmips0\n\t" : "=r" (__res)); __res; }); new = res & ~change; new |= (val & change); do { if (3 == 0) __asm__ __volatile__( "mtc0\t%z0, " "$12" "\n\t" : : "Jr" ((unsigned int)(new))); else __asm__ __volatile__( ".set\tmips32\n\t" "mtc0\t%z0, " "$12" ", " "3" "\n\t" ".set\tmips0" : : "Jr" ((unsigned int)(new))); } while (0); return res; }
+
+static inline void __sync(void)
+{
+ asm volatile("sync");
+}
+# 34 "/loongson/ejtag-debug/bin/lib/malloc.c" 2
+# 1 "/loongson/ejtag-debug/bin/include/spinlock.h" 1
+
+#define __SPINLOCK_H__ 
+typedef int spinlock_t;
+#define DEFINE_SPINLOCK(x) spinlock_t x;
+#define spin_lock_irqsave(lock,flags) flags = (clear_c0_status(1) & 1)
+#define spin_unlock(...) 
+#define spin_lock(...) 
+#define spin_lock_init(...) 
+#define spin_unlock_irqrestore(lock,flags) change_c0_status(1, flags)
+# 35 "/loongson/ejtag-debug/bin/lib/malloc.c" 2
+static spinlock_t memlock;;
+typedef long long ALIGN;
+void free(void *ap);
+void * memset(void * s,int c, size_t count);
+
+
+union header {
+    struct {
+ union header *ptr;
+ unsigned size;
+    } s;
+    ALIGN x;
+};
+
+typedef union header HEADER;
+
+static HEADER base;
+static HEADER *allocp; /* K&R called allocp, freep */
+
+
+
+
+#define NALLOC 128
+
+/* The rest of this file is from pages 185-189 of K & R Edition 2 */
+
+static HEADER *morecore (unsigned nbyte);
+
+extern char _heap[];
+extern char _start[];
+char *membase=_heap;
+char *sbrk(int size)
+{
+char *p;
+char *end;
+long flags;
+flags = (clear_c0_status(1) & 1);
+p = membase;
+membase += size;
+# 91 "/loongson/ejtag-debug/bin/lib/malloc.c"
+change_c0_status(1, flags);
+return p;
+}
+
+
+void *
+malloc(size_t nbytes)
+{
+ HEADER *p, *q; /* K&R called q, prevp */
+ unsigned nunits;
+ long flags;
+
+ nunits = (nbytes + sizeof (HEADER) - 1) / sizeof (HEADER) + 1;
+ flags = (clear_c0_status(1) & 1);
+ if ((q = allocp) == ((void *)0)) { /* no free list yet */
+  base.s.ptr = allocp = q = &base;
+  base.s.size = 0;
+ }
+ for (p = q->s.ptr;; q = p, p = p->s.ptr) {
+  if (p->s.size >= nunits) { /* big enough */
+   if (p->s.size == nunits) /* exactly */
+    q->s.ptr = p->s.ptr;
+   else { /* allocate tail end */
+    p->s.size -= nunits;
+    p += p->s.size;
+    p->s.size = nunits;
+   }
+   allocp = q;
+   p->s.ptr = p;
+   change_c0_status(1, flags);
+   return ((char *)(p + 1));
+  }
+  if (p == allocp)
+  {
+   change_c0_status(1, flags);
+   if ((p = morecore (nunits)) == ((void *)0))
+   return (((void *)0));
+   flags = (clear_c0_status(1) & 1);
+  }
+ }
+}
+
+
+static HEADER *
+morecore(unsigned nu)
+{
+ char *cp;
+ HEADER *up;
+ int rnu;
+
+ rnu = 128 * ((nu + 128 - 1) / 128);
+ cp = sbrk(rnu * sizeof (HEADER));
+ if ((int)cp == ((void *)0))
+  return (((void *)0));
+ up = (HEADER *) cp;
+ up->s.size = rnu;
+        up->s.ptr = up;
+ free ((char *)(up + 1));
+ return (allocp);
+}
+
+
+void
+free(void *ap)
+{
+ HEADER *p, *q;
+ long flags;
+ if (!ap)
+  return ;
+
+ p = (HEADER *) ap - 1;
+ if (p->s.ptr != p)
+    p = p->s.ptr;
+ flags = (clear_c0_status(1) & 1);
+ for (q = allocp; !(p > q && p < q->s.ptr); q = q->s.ptr)
+  if (q >= q->s.ptr && (p > q || p < q->s.ptr))
+   break;
+ if (p + p->s.size == q->s.ptr) {
+  p->s.size += q->s.ptr->s.size;
+  p->s.ptr = q->s.ptr->s.ptr;
+ } else
+  p->s.ptr = q->s.ptr;
+ if (q + q->s.size == p) {
+  q->s.size += p->s.size;
+  q->s.ptr = p->s.ptr;
+ } else
+  q->s.ptr = p;
+ allocp = q;
+ change_c0_status(1, flags);
+}
+
+void * malloc_align(size_t nbytes, int align)
+{
+ void *p, *p1;
+ HEADER *q, *q1;
+ if (align<=sizeof(ALIGN)) return malloc(nbytes);
+
+ p = malloc(nbytes + align);
+ p1 = (long)(p + align - 1) & ~(align - 1);
+ if (p1 != p)
+ {
+  q = ((HEADER *)p)-1;
+  q1 = ((HEADER *)p1)-1;
+  q1->s.size = q->s.size - (p1 - p);
+  q1->s.ptr = q;
+ }
+
+ return p1;
+}
+
+void * zalloc_align(size_t nbytes, int align)
+{
+ char *p = malloc_align(nbytes, align);
+ if (p)
+  memset(p, 0, nbytes);
+ return p;
+}
+
+int
+allocsize(void *ap)
+{
+ HEADER *p;
+
+ p = (HEADER *) ap - 1;
+ return (p->s.size * sizeof (HEADER));
+}

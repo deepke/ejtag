@@ -1,0 +1,67 @@
+int type;
+#define printf newprintf
+
+int dumpdcache()
+{
+	unsigned int taglo;
+	int way;
+	unsigned int x, w, cs, scway;
+	unsigned int tl, pkg, kp, w, ds, ss;
+	unsigned long addr=0xffffffff9fc00000;
+	long len=64*1024/4;
+
+
+	for(;len>0;len-=64,addr+=64)
+	{
+		for(way=0;way<4;way++)
+		{
+				asm volatile(".set mips64;cache %2,(%1);mfc0 %0,$28;.set mips0;":"=r"(taglo):"r"(addr|way),"i"(5));
+				tl= taglo & 0xfffff000;
+				w = (taglo >> 8)&1;
+				cs = (taglo >> 6)&3;
+				scway = taglo&0xf;
+				printf("cs=%d tl=0x%08x way=0x%x w=0x%x cs=0x%x scway=0x%x taglo=0x%08x\n",cs, tl,way,w,cs,scway,taglo);
+		}
+	}
+
+}
+
+return 0;
+}
+
+
+int dumpscache()
+{
+	unsigned int taglo;
+	int way;
+	unsigned int x, w, cs, scway;
+	unsigned int tl, pkg, kp, w, ds, ss;
+	unsigned long addr=0xffffffff9fc00000;
+	long len=512*1024/4;
+
+
+	for(;len>0;len-=64,addr+=64)
+	{
+		for(way=0;way<4;way++)
+		{
+				asm volatile(".set mips64;cache %2,(%1);mfc0 %0,$28;.set mips0;":"=r"(taglo):"r"(addr),"i"(7));
+				tl= taglo &0xffff0000;
+				pkg = (taglo>>10)&3;
+				kp = (taglo>>9)&1;
+				w = (taglo>>8)&1;
+				ds = (taglo>>7)&1;
+				ss = (taglo>>6)&1;
+				printf("ss=%d tl=0x%08x way=%d pkg=%d kp=%d w=%d ds=%d ss=%d taglo=0x%08x\n",ss,tl,way,pkg,kp,w,ds,ss);
+		}
+	}
+
+}
+
+return 0;
+}
+
+int mymain(int a0)
+{
+type = a0;
+dumpcache();
+}

@@ -1,0 +1,4 @@
+source configs/config.ls1d
+renamecmd erase erase_all
+newcmd erase 'erase_area 0 0x40000 0x80' 'erase 256K'
+

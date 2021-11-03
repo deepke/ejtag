@@ -1,0 +1,11 @@
+setconfig core.cpuwidth 32
+setconfig core.cpucount 1
+setconfig core.abisize 32
+setconfig jtag.fastdata32 0
+setconfig put.fastdata 0
+setconfig core.nocache 1
+setconfig putelf.uncached 0
+
+gdbmap add 0 0x10000000 0
+
+setconfig helpaddr 0x10001000

@@ -1,0 +1,108 @@
+define vxtasks
+set $cur = vxKernelVars[0].vars.cpu_taskIdCurrent
+set $head = ((CLASS_ID)taskClassId)->objPrivList->head
+set $savedhead=$head
+set $i=0
+
+
+while $head 
+
+set $tcb = (struct windTcb *) ((long)$head - (long)&((OBJ_CORE *)0)->classNode)
+eval "set $tcb%d=$tcb",$i
+printf "%c%-2d: Name: %-30s Entry: 0x%x pc: 0x%08x ra: 0x%08x\n", ($tcb == $cur)?'*':0x20,$i, $tcb->objCore->name, $tcb->entry, $tcb->regs.pc, $tcb->regs.gpreg[31]
+set $i=$i+1
+set $head = $head->next
+if (long)$head == (long)$savedhead
+loop_break
+end
+end
+end
+
+define regs_save
+frame 0
+set $mypc=$pc
+set $mysp=$sp
+set $myra=$ra
+set $mygp=$gp
+set $myat=$at
+set $myv0=$v0
+set $myv1=$v1
+set $mya0=$a0
+set $mya1=$a1
+set $mya2=$a2
+set $mya3=$a3
+set $myt0=$t0
+set $myt1=$t1
+set $myt2=$t2
+set $myt3=$t3
+set $myt4=$t4
+set $myt5=$t5
+set $myt6=$t6
+set $myt7=$t7
+set $mys0=$s0
+set $mys1=$s1
+set $mys2=$s2
+set $mys3=$s3
+set $mys4=$s4
+set $mys5=$s5
+set $mys6=$s6
+set $mys7=$s7
+set $myt8=$t8
+set $myt9=$t9
+set $myk0=$k0
+set $myk1=$k1
+set $mys8=$s8
+end
+
+define regs_restore
+frame 0
+set $sp=$mysp
+set $gp=$mygp
+set $at=$myat
+set $v0=$myv0
+set $v1=$myv1
+set $a0=$mya0
+set $a1=$mya1
+set $a2=$mya2
+set $a3=$mya3
+set $t0=$myt0
+set $t1=$myt1
+set $t2=$myt2
+set $t3=$myt3
+set $t4=$myt4
+set $t5=$myt5
+set $t6=$myt6
+set $t7=$myt7
+set $s0=$mys0
+set $s1=$mys1
+set $s2=$mys2
+set $s3=$mys3
+set $s4=$mys4
+set $s5=$mys5
+set $s6=$mys6
+set $s7=$mys7
+set $t8=$myt8
+set $t9=$myt9
+set $k0=$myk0
+set $k1=$myk1
+set $s8=$mys8
+set $pc=$mypc
+set $ra=$myra
+end
+
+define regs_kernel
+set $tcb = (struct windTcb *)$arg0
+printf "%-2d: Name: %-30s Entry: 0x%x pc: 0x%08x ra: 0x%08x\n", $i, $tcb->objCore->name, $tcb->entry, $tcb->regs.pc, $tcb->regs.gpreg[31]
+set $pc=$tcb->regs.pc
+set $ra=$tcb->regs.gpreg[31]
+set $s8=$tcb->regs.gpreg[30]
+set $sp=$tcb->regs.gpreg[29]
+set $s7=$tcb->regs.gpreg[23]
+set $s6=$tcb->regs.gpreg[22]
+set $s5=$tcb->regs.gpreg[21]
+set $s4=$tcb->regs.gpreg[20]
+set $s3=$tcb->regs.gpreg[19]
+set $s2=$tcb->regs.gpreg[18]
+set $s1=$tcb->regs.gpreg[17]
+set $s0=$tcb->regs.gpreg[16]
+end

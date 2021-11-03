@@ -1,0 +1,45 @@
+version=3.24
+v3.20 add ls3a2000 support.
+v3.21 update put, get, callbin for ls3a and  ls3a2000 to avoid guess.
+v3.21.2 update ls3a config, fix cpu window, disable ddr window. program_cachelock work well.
+v3.21.3 update ls3a2000, ls3a config, memset to init cachelocked area first.
+v3.22.1 add ls3c(ls3b1500) support.
+v3.22.2 update ls3a,ls3c program_cachelock
+v3.22.3 update ls1b program_cachelock, ls3a i2c function etc.
+v3.22.4 add more user debug cmd.
+v3.22.5 change some script.
+v3.23 fix expr cmd,add dummy, devmem,update scripts.
+v3.23.1 fix abi maped address check, update gdb1.py.
+v3.23.2 new mipsel-gdb, support python. 
+v3.24 fix gdb for mcpu, add more usefull tools.
+v3.24.1 fix gdb, gdbmap can trans address.
+v3.24.2 fix unwatch, add spi1.BIN, fix ls1h erase area.
+v3.24.3 mips add ejtag_debug_gpio
+v3.24.4 update scripts, add ls2k support etc.
+v3.24.5 update eclipse, ddd scripts.
+v3.24.6 add log cmd, update eclipse, update scripts.
+v3.24.7 update eclipse, update scripts, fix smemset.
+v3.25  change gdb mode for multi cpu.
+v3.25.1 fix eclipse support for windows, fix smemcpy
+v3.25.2 add 1dflash.iobase, soft breakpoint use gdbmap.
+v3.25.3 fix go cmd and gdb cmd cont.
+v3.25.4 add log, eclipse update to latest version.
+v3.25.5 fix break,ret cmd not inited.
+v3.25.6 fix gdbmap, symbol cmd
+v3.25.8 add Hb,unHb etc,update ls1d, ls1c nand tool.
+v3.25.9 hb add asid:asid gid:gid support.
+v3.25.10 fix expr bug, update scripts
+v3.25.11 fix sputelf, update scripts
+v3.25.12 fix callbin, fix read data reg.
+v3.25.13 use jtag all reg, fix restore for 3a4000.
+v3.25.14 fix hb for asid change argv.
+v3.25.17 add rtc_wake scripts etc.
+v3.25.18 add 16bit support.
+v3.25.19 add callelf support.
+
+
+gdb build:
+linux:
+../configure --disable-werror --target=mipsel-linux --enable-targets=mipsel-linux,mips64el-linux --enable-tui --enable-static --disable-doc
+cygwin/msys2:
+../configure --disable-werror --target=mipsel-linux --enable-targets=mipsel-linux,mips64el-linux --enable-tui --enable-static --disable-doc --build=x86_64-cygwin

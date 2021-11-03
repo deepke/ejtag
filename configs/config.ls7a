@@ -1,0 +1,166 @@
+
+
+function ls7a_init
+letl pcicfgbase  0x90000efdfe000000
+m4 {$pcicfgbase|(2<<11)|0x10}  0x10080000
+m4 {$pcicfgbase|(2<<11)|4}  7
+m4 {$pcicfgbase|(21<<11)|0x10}  0x10010000
+m4 {$pcicfgbase|(21<<11)|0x4}  0x7
+ret
+
+function set_ls7a_gpio_out
+letl pin val ${1:0} ${2:0}
+letl off {($pin/32)*4}
+letl pin {$pin%32}
+letl dir {0x90000e00100e0000+$off}
+letl out {0x90000e00100e0010+$off}
+
+m4 $dir {$(d4q $dir 1)&(~(1<<$pin))}
+do if $val
+m4 $out {$(d4q $out 1)|(1<<$pin)}
+else
+m4 $out {$(d4q $out 1)&~(1<<$pin)}
+end
+ret
+
+function gpio_sel_dc
+renamelabel set_gpio_out set_ls3a_gpio_out
+renamelabel get_gpio_in get_ls3a_gpio_out
+letl gpio_d gpio_c 0 1
+renamelabel set_dc_gpio_out set_gpio_out 
+renamelabel get_dc_gpio_out get_gpio_out 
+ret
+
+function set_dc_gpio_out
+letl pcicfgbase  0x90000efdfe000000
+#letl pcicfgbase  0xffffffffba000000
+letl base {($(d4q {$pcicfgbase|0x3110} 1)&~0xf)|0x9000000000000000}
+letl pin val ${1:0} ${2:0}
+letl dir {$base+0x1660}
+letl out {$base+0x1650}
+
+m4 $dir {$(d4q $dir 1)&(~(1<<$pin))}
+do if $val
+m4 $out {$(d4q $out 1)|(1<<$pin)}
+else
+m4 $out {$(d4q $out 1)&~(1<<$pin)}
+end
+ret
+
+
+function get_dc_gpio_in
+letl pcicfgbase  0x90000efdfe000000
+#letl pcicfgbase  0xffffffffba000000
+letl base {($(d4q {$pcicfgbase|0x3110} 1)&~0xf)|0x9000000000000000}
+letl pin val ${1:0} ${2:0}
+letl dir {$base+0x1660}
+letl out {$base+0x1650}
+
+m4 $dir {$(d4q $dir 1)|(1<<$pin)}
+expr ($(d4q $out 1)>>$pin)&1
+ret
+
+
+dellabel i2c_ls2k_init
+
+function i2c_ls2k_init
+ let i2creg {0x9000000010090000+${1:0}*0x100};
+ m1 $(expr $i2creg+0x2) 0x0;
+ m1 $(expr $i2creg+0x0) 0x64;
+ m1 $(expr $i2creg+0x1) 0x02;
+ m1 $(expr $i2creg+0x2) 0x80;
+ret
+
+let w83795_cs w83795_addr 1 0x5e
+function w83795_init
+let w83795_cs w83795_addr ${1:1} ${2:0x5e}
+i2c_ls2k_init $w83795_cs
+ret
+
+function w83795_write
+let reg val ${1:0} ${2:0}
+do if {$reg!=0}
+letl o $(i2c_ls2k_read $w83795_addr 0)
+if {($o&0xf)!=($reg>>8)} i2c_ls2k_write $w83795_addr 0 {($reg>>8)|($o&0xf0)}
+i2c_ls2k_write $w83795_addr {$reg&0xff} $val
+if {($o&0xf)!=($reg>>8)} i2c_ls2k_write $w83795_addr 0 $o
+else
+i2c_ls2k_write $w83795_addr 0 $val
+end
+ret
+
+function w83795_read
+let reg cnt ${1:0} ${2:1}
+do if {$reg!=0}
+letl o $(i2c_ls2k_read $w83795_addr 0)
+if {($o&0xf)!=($reg>>8)} i2c_ls2k_write $w83795_addr 0 {($reg>>8)|($o&0xf0)}
+i2c_ls2k_read $w83795_addr {$reg&0xff} $cnt
+if {($o&0xf)!=($reg>>8)} i2c_ls2k_write $w83795_addr 0 $o
+else
+i2c_ls2k_read $w83795_addr 0 $cnt
+end
+ret
+
+function w83795_test
+w83795_init
+w83795_write 0x20c 0
+w83795_write 0x210 0
+ret
+
+letl pcicfgbase  0x90000efe00000000
+letl pcicfgbase1 0x90000efe10000000
+
+function acpi_suspend
+letl acpibase 0xffffffffb00d0000 
+letl GPE0_EN  {$acpibase+0x2c}
+letl GPE0_STS {$acpibase+0x28}
+letl PM1_STS  {$acpibase+0xc}
+letl PM1_CNT  {$acpibase+0x14}
+letl PM1_EN  {$acpibase+0x10}
+letl PMCON_RESUME  {$acpibase+0x4}
+
+m4 $GPE0_EN  0xfd70;
+m4 $GPE0_STS 0x0000ffff
+m4 $PM1_STS  0x0000ffff
+m4 $PMCON_RESUME {$(d4q $PMCON_RESUME 1)|0x2880}
+m4 $PM1_EN {$(d4q $PM1_EN 1)|0x400}
+m4 $PM1_CNT  0x00003400
+ret
+
+function rtc_wake
+rtc_set 2020 5 8 0 0 0 
+rtc_alarmset 2020 5 8 0 0 ${1:10}
+acpi_suspend
+ret
+
+let rtc_reg 0xffffffffb00d0100
+function rtc_set
+letl y m d h M s ${1:2016} ${2:1} ${3:1} ${4:12} ${5:0} ${6:0}
+letl c $(d4q {$rtc_reg+0x40} 1)
+if {($c&0x2900)!=0x2900} m4 {$rtc_reg+0x40} 0x2900
+m4 {$rtc_reg+0x28} {$y-1900}
+m4 {$rtc_reg+0x24}  {($m<<26)|($d<<21)|($h<<16)|($M<<10)|($s<<4)}
+ret
+
+function rtc_alarmset
+letl y m d h M s ${1:2016} ${2:1} ${3:1} ${4:12} ${5:0} ${6:0}
+letl c $(d4q {$rtc_reg+0x40} 1)
+if {($c&0x2900)!=0x2900} m4 {$rtc_reg+0x40} 0x2900
+m4 {$rtc_reg+0x34}  {((($y-1900)&0x3f)<<26)|($m<<22)|($d<<17)|($h<<12)|($M<<6)|($s<<0)}
+ret
+
+function rtc_read
+letl c $(d4q {$rtc_reg+0x40} 1)
+if {($c&0x2900)!=0x2900} m4 {$rtc_reg+0x40} 0x2900
+letl t $(d4q {$rtc_reg+0x2c}  1)
+letl y $(d4q {$rtc_reg+0x30}  1)
+echo $y $t
+expr %'%d-%d-%d %d:%d:%d.%d' $y+1900 ($t>>26)&0x3f  ($t>>21)&0x1f ($t>>16)&0x1f ($t>>10)&0x3f ($t>>4)&0x3f $t&0xf
+ret
+
+function reboot_ls7a
+letl acpibase 0xffffffffb00d0000 
+m4 {$acpibase+0x30} 2
+m4 {$acpibase+0x38} 0x10000000
+m4 {$acpibase+0x34} 1
+ret

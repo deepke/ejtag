@@ -1,0 +1,1599 @@
+echo_on
+jtag_clk 1 2
+setconfig core.cpucount 1
+setconfig core.cpuwidth 64
+setconfig core.abisize 64
+setconfig core.nocache 1
+setconfig helpaddr 0xffffffff8000f000
+setconfig usb_ejtag.put_speed 400
+setenv ENV_memsize 256
+#setenv ENV_highmemsize 1792
+setenv ENV_cpuclock 800000000
+setenv LOONGSON_2H 1
+let spibase 0xffffffffbfd00000
+setconfig spi.iobase $spibase
+setconfig jtag.jrhb 1
+setconfig jtag.jalrhb 1
+newcmd si si.h
+
+function testserial
+
+let  serialdiv ${1:{125000000/115200/16}}
+echo_on
+
+m4 0xffffffffbfe10428 {$(d4q 0xffffffffbfe10428 1)|0x3eee}
+
+for letl i 0; {$i<12};letl i {%%d $i+1}
+letl a$i {0xffffffffbfe00000+$i*0x100}
+letl base ${a$i}
+m1 {$base+2} 0x47
+m1 {$base+3} 0x80
+m1 {$base+0} {$serialdiv&0xff} {$serialdiv>>8}
+m1 {$base+3} 3
+m1 {$base+4} 3
+m1 {$base+1} 0
+end
+
+do while 1
+
+for letl i 0; {$i<12};letl i {%%d $i+1}
+letl base ${a$i}
+m1 $base {0x61+$i}
+m1 $base 0xd
+m1 $base 0xa
+end
+
+end
+ret
+
+letl PLL_L1_LOCKED 	{"(0x1 << 16)"}
+letl PLL_L1_ENA		{"(0x1 << 2)"}
+
+letl PLL_MEM_ENA	{"(0x1 << 2)"}
+letl PLL_MEM_LOCKED 	{"(01 << 16)"}
+letl PLL_CHANG_COMMIT 0x1
+
+letl DDR_REFC   4
+letl DDR_DIV    1
+letl DDR_DIV_L2    4
+letl GPU_DIV_L2    5
+
+letl PLL_IN 100000000
+letl DDR_LOOPC {333000000/10*${DDR_DIV}*${DDR_REFC}*${DDR_DIV_L2}/(${PLL_IN}/10)}
+
+#/* CPU @ 1000Mhz */
+letl L1_LOOPC    80
+letl L1_REFC     4
+letl L1_DIV      1
+letl L2_DIV      2
+
+letl L1_LOOPC {1000000000/10*${L1_DIV}*${L1_REFC}*${L2_DIV}/(${PLL_IN}/10)}
+
+#dc 200M
+#gmac 125M
+
+letl DC_LOOPC    80
+letl DC_REFC     4
+letl DC_DIV      1
+letl DC_DIV_L2   8
+letl GMAC_DIV    16
+#letl DC_LOOPC {250000000/10*${DC_DIV}*${DC_REFC}*${DC_DIV_L2}/(${PLL_IN}/10)}
+
+#letl PIX0_LOOPC	109
+letl PIX0_REFC	5
+letl PIX0_DIV	1
+letl PIX0_DIV_L2	20
+letl PIX0_LOOPC {64000000/10*${PIX0_DIV}*${PIX0_REFC}*${PIX0_DIV_L2}/(${PLL_IN}/10)}
+
+#letl PIX1_LOOPC	109
+letl PIX1_REFC	5
+letl PIX1_DIV	1
+letl PIX1_DIV_L2	20
+letl PIX0_LOOPC {64000000/10*${PIX1_DIV}*${PIX1_REFC}*${PIX1_DIV_L2}/(${PLL_IN}/10)}
+
+function set_cpu_clk
+
+letl   t0 0xffffffffbfe10480
+letl	t1 {"(${L1_LOOPC} << 32) | (${L1_DIV} << 42) | (${L1_REFC} << 26) | (0x3 << 10) | (0x1 << 7)"}
+m8      $t0 {"(0x1 << 19)"}       #power down pll L1 first
+m8	$t0 $t1
+m8	{8+$t0} ${L2_DIV}
+m8      $t0 {$t1|${PLL_L1_ENA}}
+
+while {($(d8q $t0 1)&${PLL_L1_LOCKED})==0}
+
+m8 $t0 {$(d8q $t0 1)|${PLL_CHANG_COMMIT}}
+ret
+
+
+function set_ddr_clk
+
+letl    t0 0xffffffffbfe10490
+letl    t1 {"(${DDR_DIV} << 42) | (${DDR_REFC} << 26) | (${DDR_LOOPC} << 32) | (0x3 << 10) | (0x1 << 7)"}
+m8	$t0 {"(0x1 << 19)"}
+m8	$t0 $t1
+m8 	{8+$t0} {"(${GPU_DIV_L2} << 22) | (${DDR_DIV_L2})"}
+m8	$t0	{$t1|${PLL_L1_ENA}}
+
+while {($(d8q $t0 1)&${PLL_MEM_LOCKED})==0}
+m8 $t0 {$(d8q $t0 1)|3}
+
+ret
+
+function set_dc_clk
+
+echo dc
+letl    t0 0xffffffffbfe104a0
+letl    t1 {"(${DC_DIV} << 42) | (${DC_REFC} << 26) | (${DC_LOOPC} << 32) | (0x3 << 10) | (0x1 << 7)"}
+m8	$t0 {"(0x1 << 19)"}
+m8	$t0 $t1
+m8 	{8+$t0} {"(${GMAC_DIV} << 22) | (${DC_DIV_L2})"}
+m8	$t0	{$t1|${PLL_L1_ENA}}
+
+while {($(d8q $t0 1)&${PLL_MEM_LOCKED})==0}
+m8 $t0 {$(d8q $t0 1)|3}
+
+ret
+
+function set_pix0_clk
+echo pix0
+letl    t0 0xffffffffbfe104b0
+letl    t1 {"(${PIX0_DIV} << 42) | (${PIX0_REFC} << 26) | (${PIX0_LOOPC} << 32) | (0x3 << 10) | (0x1 << 7)"}
+m8	$t0 {"(0x1 << 19)"}
+m8	$t0 $t1
+m8 	{8+$t0} ${PIX0_DIV_L2}
+m8	$t0	{$t1|${PLL_L1_ENA}}
+
+while {($(d8q $t0 1)&${PLL_MEM_LOCKED})==0}
+m8 $t0 {$(d8q $t0 1)|1}
+ret
+
+function set_pix1_clk
+letl    t0 0xffffffffbfe104c0
+letl    t1 {"(${PIX1_DIV} << 42) | (${PIX1_REFC} << 26) | (${PIX1_LOOPC} << 32) | (0x3 << 10) | (0x1 << 7)"}
+m8	$t0 {"(0x1 << 19)"}
+m8	$t0 $t1
+m8 	{8+$t0} ${PIX1_DIV_L2}
+m8	$t0	{$t1|${PLL_L1_ENA}}
+
+while {($(d8q $t0 1)&${PLL_MEM_LOCKED})==0}
+m8 $t0 {$(d8q $t0 1)|1}
+
+ret
+
+let rtc_reg 0xffffffffbff6c100
+function rtc_set
+letl y m d h M s ${1:2016} ${2:1} ${3:1} ${4:12} ${5:0} ${6:0}
+letl c $(d4q {$rtc_reg+0x40} 1)
+if {($c&0x2900)!=0x2900} m4 {$rtc_reg+0x40} 0x2900
+m4 {$rtc_reg+0x28} {$y-1900}
+m4 {$rtc_reg+0x24}  {($m<<26)|($d<<21)|($h<<16)|($M<<10)|($s<<4)}
+ret
+
+function rtc_alarmset
+letl y m d h M s ${1:2016} ${2:1} ${3:1} ${4:12} ${5:0} ${6:0}
+letl c $(d4q {$rtc_reg+0x40} 1)
+if {($c&0x2900)!=0x2900} m4 {$rtc_reg+0x40} 0x2900
+m4 {$rtc_reg+0x34}  {((($y-1900)&0x3f)<<26)|($m<<22)|($d<<17)|($h<<12)|($M<<6)|($s<<0)}
+ret
+
+function rtc_read
+letl c $(d4q {$rtc_reg+0x40} 1)
+if {($c&0x2900)!=0x2900} m4 {$rtc_reg+0x40} 0x2900
+letl t $(d4q {$rtc_reg+0x2c}  1)
+letl y $(d4q {$rtc_reg+0x30}  1)
+echo $y $t
+expr %'%d-%d-%d %d:%d:%d.%d' $y+1900 ($t>>26)&0x3f  ($t>>21)&0x1f ($t>>16)&0x1f ($t>>10)&0x3f ($t>>4)&0x3f $t&0xf
+ret
+
+
+function fixup_window
+;ret
+cp0s 0 m8 12 {($(cp0s 0 d8q 12 1)&~4)|0xe0}
+              
+              
+letl t2 0xffffffffbfe10000
+
+#make flash window cover ddr window, so guess will not goto ddr, :)
+
+m8 {$t2+0x50} 0xfffffffffff00000 
+m8 {$t2+0x90} 0x000000001fc000f2 
+m8 {$t2+10}    0x000000001fc00000 
+              
+              
+m8 {$t2+58}    0x0000000010000000 
+m8 {$t2+0x98} 0xfffffffff0000000 
+m8 {$t2+0x18} 0x0000000010000082 
+
+
+ret
+
+function dm8
+  letl i {$1&0xfff}
+  letl q ${ddrp$i:$2}
+  let  ddrp$i $q
+  if {$i==0x18&&($2&1)} letl q {$q|1}
+  m8 $1 $q
+ret
+
+function configddr
+cp0s 0 m8 12 {($(cp0s 0 d8q 12 1)&~4)|0xe0}
+m4 0xffffffffbfe10100 {$(d4q 0xffffffffbfe10100 1)&~0x800}
+dm8 0x900000000ff00000 0x0000003d00000004
+dm8 0x900000000ff00008 0x0000000000000007
+dm8 0x900000000ff00010 0x0000000000000000
+dm8 0x900000000ff00018 0x3030303004100000 
+dm8 0x900000000ff00020 0x0201000201000101
+dm8 0x900000000ff00028 0x0101000002010100
+dm8 0x900000000ff00030 0x0000000004030202
+dm8 0x900000000ff00038 0x0000002020381865
+dm8 0x900000000ff00040 0x0201000201000101
+dm8 0x900000000ff00048 0x0101000002010100
+dm8 0x900000000ff00050 0x0000000004030202
+dm8 0x900000000ff00058 0x0000002020381862
+dm8 0x900000000ff00060 0x0201000201000101
+dm8 0x900000000ff00068 0x0101000002010100
+dm8 0x900000000ff00070 0x0000000004030202
+dm8 0x900000000ff00078 0x0000002020381868
+dm8 0x900000000ff00080 0x0201000201000101
+dm8 0x900000000ff00088 0x0101000002010100
+dm8 0x900000000ff00090 0x0000000004030202
+dm8 0x900000000ff00098 0x0000002020381860
+dm8 0x900000000ff000a0 0x0201000201000001
+dm8 0x900000000ff000a8 0x0101000002010100
+dm8 0x900000000ff000b0 0x0000000004030202
+dm8 0x900000000ff000b8 0x0000002020482860
+dm8 0x900000000ff000c0 0x0201000201000101
+dm8 0x900000000ff000c8 0x0101000002010100
+dm8 0x900000000ff000d0 0x0000000004030202
+dm8 0x900000000ff000d8 0x0000002020381874
+dm8 0x900000000ff000e0 0x0201000201000101
+dm8 0x900000000ff000e8 0x0101000002010100
+dm8 0x900000000ff000f0 0x0000000004030202
+dm8 0x900000000ff000f8 0x0000002020381876
+dm8 0x900000000ff00100 0x0201000201000001
+dm8 0x900000000ff00108 0x0101000002010100
+dm8 0x900000000ff00110 0x0000000004030202
+dm8 0x900000000ff00118 0x0000002020482860
+dm8 0x900000000ff00120 0x0201000201000000
+dm8 0x900000000ff00128 0x0303000002010100
+dm8 0x900000000ff00130 0x0000000003020202
+dm8 0x900000000ff00138 0x00000020207f6000
+dm8 0x900000000ff00140 0x0003000001ff01ff
+dm8 0x900000000ff00148 0x0000000000010100
+dm8 0x900000000ff00150 0x00000000f0020000
+dm8 0x900000000ff00158 0x01d00000f0000000
+dm8 0x900000000ff00160 0x000000000f000101
+dm8 0x900000000ff00168 0x140000070701010f
+dm8 0x900000000ff00170 0x8421050000000501
+dm8 0x900000000ff00178 0x0000000000000000
+dm8 0x900000000ff00180 0x0001000001100100
+dm8 0x900000000ff00188 0x0000000000000000
+dm8 0x900000000ff00190 0x0000000000000000
+dm8 0x900000000ff00198 0x0000000001000100
+dm8 0x900000000ff001a0 0x0000001000060d30
+dm8 0x900000000ff001a8 0x0000001000060d30
+dm8 0x900000000ff001b0 0x0000001000060d30
+dm8 0x900000000ff001b8 0x0000001000060d30
+dm8 0x900000000ff001c0 0x3030c80c03042004
+dm8 0x900000000ff001c8 0x110707070cf04080
+dm8 0x900000000ff001d0 0x0a020c0302000019 
+dm8 0x900000000ff001d8 0x14050c0607070406
+dm8 0x900000000ff001e0 0x0503000000000000
+dm8 0x900000000ff001e8 0x0309000000000000
+dm8 0x900000000ff001f0 0x000801e4ff050101 
+dm8 0x900000000ff001f8 0x0000000004081001
+dm8 0x900000000ff00200 0x0c000c000c000c00
+dm8 0x900000000ff00208 0x0c000c0000000000
+dm8 0x900000000ff00210 0x0008010e00030006 
+dm8 0x900000000ff00218 0x0008010f02010006
+dm8 0x900000000ff00220 0x0008010f02010006
+dm8 0x900000000ff00228 0x0008010f02010006
+dm8 0x900000000ff00230 0x0fff000000000000
+dm8 0x900000000ff00238 0x0ffffe000000ff00
+dm8 0x900000000ff00240 0x0000000000000000
+dm8 0x900000000ff00248 0x0000000000000000
+dm8 0x900000000ff00250 0x0000000000000000
+dm8 0x900000000ff00258 0x0000000000000000
+dm8 0x900000000ff00260 0x0000000000000000
+dm8 0x900000000ff00268 0x0000000000000000
+dm8 0x900000000ff00270 0x0000001000000000
+dm8 0x900000000ff00278 0x0000000000000000
+dm8 0x900000000ff00280 0x0000000000000000
+dm8 0x900000000ff00288 0x0000000000000000
+dm8 0x900000000ff00290 0x0000000000000000
+dm8 0x900000000ff00298 0x0000000000000000
+dm8 0x900000000ff002a0 0x0000000000000000
+dm8 0x900000000ff002a8 0x0000000000000000
+dm8 0x900000000ff002b0 0x0000000000000000
+dm8 0x900000000ff002b8 0x0000000000000000
+dm8 0x900000000ff002c0 0x0000000000000000
+dm8 0x900000000ff002c8 0x0000000000000000
+dm8 0x900000000ff002d0 0x0000000000000000
+dm8 0x900000000ff002d8 0x0000000000000000
+dm8 0x900000000ff002e0 0x0000000000000000
+dm8 0x900000000ff002e8 0x0000000000000000
+dm8 0x900000000ff002f0 0x0000000000000000
+dm8 0x900000000ff002f8 0x0000000000000000
+dm8 0x900000000ff00300 0x0000000000000000
+dm8 0x900000000ff00308 0x0000000000000000
+dm8 0x900000000ff00310 0x0000000000000000
+dm8 0x900000000ff00318 0x0000000000000000
+dm8 0x900000000ff00320 0x0808301000016000
+dm8 0x900000000ff00328 0x0000000000000000
+dm8 0x900000000ff00330 0x0000011000000400
+dm8 0x900000000ff00338 0x0000000000000000
+dm8 0x900000000ff00340 0x0030d40000070f01
+dm8 0x900000000ff00348 0x0000000000000000
+dm8 0x900000000ff00350 0xffffffffffffffff
+dm8 0x900000000ff00358 0x000000000001ffff
+dm8 0x900000000ff00360 0x0000010100000000
+dm8 0x900000000ff00368 0x0000000000000000
+dm8 0x900000000ff00370 0x0e000d000c000b00
+dm8 0x900000000ff00378 0x0000000000000101
+dm8 0x900000000ff00380 0x0000000000000000
+dm8 0x900000000ff00388 0x0000000000000000
+dm8 0x900000000ff00390 0x0000000000000001
+dm8 0x900000000ff00018 0x3030303016100101
+while {(($(d8q 0x900000000ff00160 1)>>24)&1)!=1}
+#m4 0xffffffffbfe10100 {$(d4q 0xffffffffbfe10100 1)|0x800}
+m4 0xffffffffbfe10100 {$(d4q 0xffffffffbfe10100 1)&~0x1000}
+ret
+
+function dumpddr
+letl ddrwidth ${1:0}
+do if {$ddrwidth==32}
+let ddrp0x1c0 0x3030c80c03042004
+let ddrp0x1f0 0x000801e4ff050101
+let ddrp0x210 0x0008010e00030006
+elsif {$ddrwidth==16}
+let ddrp0x1c0 0x3030c80c03042003
+let ddrp0x1f0 0x000801e4ff030101
+let ddrp0x210 0x0008010d00030006
+elsif {$ddrwidth==64}
+let ddrp0x1c0 0x3030c80c03042005
+let ddrp0x1f0 0x000801e4ff000101
+let ddrp0x210 0x0008010f00030006
+end
+#Targets/LS2K/ls2k/ddr_dir/lsmc_config_param.S: ddr_config
+#0x1c0: trddata, 0x1cb: tref, 0x1ca:trfc
+#0x320: tref_low
+#0x212: 16 - row, 0x210: 16 - col, #0x213:csmap diff #0x216: csplace
+#0x168: csen, 0x169: cs_msr 0x16a: cs_zq, 0x16b:ba_diff 0x16e: addr mirror
+#0x1f4: logic csmap
+#0x183: level cs
+#0x170: odt
+#0x1f2: datawith(0:64,1:mutichan,3:16,5:32)
+#0x250: ecc, 0x252:ecc_en
+#0x210,0x218,0x220,0x228 same
+#0x162:rfifo_valid
+#0x1d5:tphy_rdlat when rfifo_valid==0
+#0x156: reset revert
+#0x140: clkmask
+#0x1d4: phy_wrlat
+
+echo function configddr$ddrwidth
+echo cp0s 0 m8 12 \{(\$(cp0s 0 d8q 12 1)&~4)|0xe0}
+echo_off
+m4 0xffffffffbfe10100 {$(d4q 0xffffffffbfe10100 1)&~0x800}
+echo m4 0xffffffffbfe10100 \{\$(d4q 0xffffffffbfe10100 1)&~0x800}
+
+local i a
+let i 0x0
+do while $(expr $i<=0x390)
+let a 0x900000000ff00$(expr %%03x $i)
+ do if $(expr $i==0x18)
+  letl q $(expr %0x%016llx $(d8q $a 1)&~0x1)
+  echo dm8 $a $q
+ else
+  letl q $(d8q $a 1)
+  letl q ${ddrp$i:$q}
+  echo dm8 $a $q
+ end
+  let ddrp$i $q
+  let i $(expr $i+0x8)
+end
+  echo dm8 0x900000000ff00018 $(d8q 0x900000000ff00018 1)
+  letl csmap 1
+  echo while \{((\$(d8q 0x900000000ff00160 1)>>24)&$csmap)!=$csmap}
+m4 0xffffffffbfe10100 {$(d4q 0xffffffffbfe10100 1)|0x800}
+echo #m4 0xffffffffbfe10100 \{\$(d4q 0xffffffffbfe10100 1)|0x800}
+echo m4 0xffffffffbfe10100 \{\$(d4q 0xffffffffbfe10100 1)&~0x1000}
+echo ret
+echo "#s1 {((($ddrp0x210&0xf)-4)<<20)|((($ddrp0x210>>16)&0xf)<<24)|((($ddrp0x168>>48)&1)<<22)|0xc0818404}"
+echo_on
+ret
+
+function ddrtest
+ddrtest_init:f
+do if $(test $0 == ddrtest_init)
+cache_init
+echo 'let ddrp0x1c0 0x3030c80c03042004;letl ddrp0x1d0 0x0a020e0302000019;call configddr;call ddrtest'
+else
+setconfig core.nocache 0
+letl t ${1:($RANDOM<<8)}
+echo $t
+echo m8 0x9800000000000040 {$t+1} {$t+2} {$t+3} {$t+4} {$t+5} {$t+6} {$t+7} {$t+8};
+m8 0x9000000000000040 {$t+1} {$t+2} {$t+3} {$t+4} {$t+5} {$t+6} {$t+7} {$t+8};
+d8 0x9000000000000040 10
+end
+ret
+
+function erase1
+#let spi_speed 4
+setconfig spi.inited 1
+echo_off
+call spi_erase_all
+ret
+
+function erase
+setconfig spi.iobase $spibase
+setconfig flash.type byte
+erase
+ret
+
+function program
+letl file ${1:/tmp/gzrom.bin}
+setconfig helpaddr 0xffffffff8000f000
+#cache_config
+put $file 0xffffffff81000000
+setconfig spi.iobase $spibase
+setconfig flash.type byte
+spi_memen 0
+call spi_init $spi_speed
+erase
+program 0xffffffff81000000 0 $filesize
+#callbin bin/spi_n25q128.bin 0 0x81000000 $filesize
+ret
+
+function pci_config_read0
+pci_config_read0v:
+local bus dev func reg cnt addr addrp type q
+let bus dev func reg cnt  "$1" "$2" "$3" "$4" "$5"
+do if $(expr $bus==0)
+let addr type $(expr ($dev<<11)|($func<<8)|$reg) 0;
+let addrp $(expr 0xffffffffba000000|($addr&0xffff))
+else
+let addr type $(expr ($bus<<16)|($dev<<11)|($func<<8)|$reg) 0x10000;
+let addrp $(expr 0xffffffffbb000000|$addr)
+end
+if $(test $0 == pci_config_read) let q "q"
+d4$q $addrp $cnt
+ret
+
+function pci_config_write0
+local bus dev func reg cnt addr type
+let bus dev func reg data  "$1" "$2" "$3" "$4" "$5"
+do if $(expr $bus==0)
+let addr type $(expr ($dev<<11)|($func<<8)|$reg) 0;
+let addrp $(expr 0xffffffffba000000|($addr&0xffff))
+else
+let addr type $(expr ($bus<<16)|($dev<<11)|($func<<8)|$reg) 0x10000;
+let addrp $(expr 0xffffffffbb000000|($addr))
+end
+m4 $addrp $data
+ret
+
+function pci_config_read
+pci_config_readv:f
+local bus dev func reg cnt addr addrp q
+let bus dev func reg cnt  "$1" "$2" "$3" "$4" "$5"
+do if $(expr $bus==0)
+let addr $(expr ($dev<<11)|($func<<8)|($reg&0xff)|(($reg&0xf00)<<16));
+let addrp $(expr 0x900000fe00000000|$addr)
+else
+let addr $(expr ($bus<<16)|($dev<<11)|($func<<8)|($reg&0xff)|(($reg&0xf00)<<16));
+let addrp $(expr 0x900000fe00000000|$addr)
+end
+if $(test $0 == pci_config_read) let q "q"
+d4$q $addrp $cnt
+ret
+
+function pci_config_write
+local bus dev func reg cnt addr type
+let bus dev func reg data  "$1" "$2" "$3" "$4" "$5"
+do if $(expr $bus==0)
+let addr $(expr ($dev<<11)|($func<<8)|($reg&0xff)|(($reg&0xf00)<<16));
+let addrp $(expr 0x900000fe00000000|$addr)
+else
+let addr $(expr ($bus<<16)|($dev<<11)|($func<<8)|($reg&0xff)|(($reg&0xf00)<<16));
+let addrp $(expr 0x900000fe10000000|$addr)
+end
+m4 $addrp $data
+ret
+
+function pci_config_read_pci
+pci_config_read_pciv:f
+local bus dev func reg cnt addr addrp q
+let bus dev func reg cnt  "$1" "$2" "$3" "$4" "$5"
+do if $(expr $bus==0)
+let addr type $(expr (1<<($dev+11))|($func<<8)|$reg) 0;
+else
+let addr type $(expr ($bus<<16)|($dev<<11)|($func<<8)|$reg) 0x10000;
+end
+let addrp $(expr 0x9000000017100000|($addr&0xffff))
+m4 0x900000001fe11120 {($addr>>16)|$type}
+if $(test $0 == pci_config_read_pci) let q "q"
+d4$q $addrp $cnt
+ret
+
+function pci_config_write_pci
+local bus dev func reg cnt addr type
+let bus dev func reg data  "$1" "$2" "$3" "$4" "$5"
+do if $(expr $bus==0)
+let addr type $(expr (1<<($dev+11))|($func<<8)|$reg) 0;
+else
+let addr type $(expr ($bus<<16)|($dev<<11)|($func<<8)|$reg) 0x10000;
+end
+let addrp $(expr 0x9000000017100000|($addr&0xffff))
+m4 0x900000001fe11120 {($addr>>16)|$type}
+m4 $addrp $data
+ret
+
+function select_pci
+newcmd pci_config_read pci_config_read_pci
+newcmd pci_config_write pci_config_write_pci
+#m4 0x900000001fe11114 {(0x14000000>>20)|(0x18000000>>14)|0x40000}
+m4 0x900000001fe11114 {(0x10000000>>26)|(0x20000000>>20)|(0x24000000>>14)|0x40000}
+m4 0x9000000017110004 7
+ret
+
+function pci_find_cap
+letl bus dev func type ${1:0} ${2:0} ${3:0} ${4:0x10}
+letl pos val $(pci_config_read $bus $dev $func 0x34 1) 0
+do while $pos
+letl val $(pci_config_read $bus $dev $func $pos 1)
+letl t  {$val&0xff}
+if {$t==$type} loop_break
+letl pos {($val>>8)&0xff}
+letl val  0
+end
+ret $val
+
+function pcie_max_dev
+letl bus dev func ${1:0} ${2:0} ${3:0} 
+pci_find_cap $bus $dev $func 0x10
+letl val $?
+do if $val
+ do if {(($val>>20)&0xf)==4}
+   echo 1
+ else
+   echo 32
+ end
+else
+  echo 32
+end
+ret
+
+
+function pci_list_bus
+letl show $(setconfig sys.showcmd)
+echo_off
+letl bus maxdev reg count ${1:0} ${2:32} ${3:0} ${4:9}
+do if {$bus<=255}
+for letl i 0;$(expr $i<$maxdev);letl i $(expr $i+1)
+letl vendor $(pci_config_read $bus $i 0 0 1)
+if $(expr $vendor==0xffffffff) loop_continue
+letl misc $(pci_config_read $bus $i 0 0xc 1)
+letl n $(expr $misc&0x800000?8:1)
+ for letl j 0;$(expr $j<$n);letl j $(expr $j+1)
+   letl vendor $(pci_config_read $bus $i $j 0 1)
+   if $(expr $vendor==0xffffffff||$vendor==0) loop_continue
+    echo_n "$bus\t$i\t$j:\t"
+    pci_config_read $bus $i $j $reg $count
+    letl class $(pci_config_read $bus $i $j 8 1)
+    if $(expr "($class&0xffff0000)!=0x06040000 && ($class&0xffff0000)!=0x0b300000") loop_continue 
+    letl class $(pci_config_read $bus $i $j 0x18 1)
+    letl busno $(expr ($class>>8)&0xff)
+    letl maxdev1 $(pcie_max_dev $bus $i $j)
+    if {$busno!=0} call pci_list_bus $busno $maxdev1 $reg $count
+ end
+end
+end
+setconfig sys.showcmd $show
+ret
+
+
+function pci_playload
+letl bus dev func  ${1:0} ${2:0} ${3:0} 
+letl pos {$(pci_config_read $bus $dev $func 0x34)&0xff}
+do while {$pos!=0}
+letl v $(pci_config_read $bus $dev $func $pos)
+letl id {$v&0xff}
+if {$id==0x10} loop_break
+letl pos  {($v>>8)&0xff}
+end
+letl v $(pci_config_read $bus $dev $func {$pos+8})
+expr %"payload is 0x%x 0x%x" {($v>>5)&0x7} {($v>>12)&0x7}
+ret
+
+function bus2phys
+echo $1
+ret
+
+function bus2virt
+echo {$1|0x9800000000000000}
+ret
+
+function dumpe1000e
+letl bus dev func ${1:0} ${2:0} ${3:0}
+letl vend $(pci_config_read $bus $dev $func 0 1)
+if {($vend&0xffff)!=0x8086} ret
+letl bar {$(pci_config_read $bus $dev $func 0x10 1)&~0xf}
+letl rb {0x9000000000000000+$bar+0x2800}
+letl rbl {0x9000000000000000+$bar+0x2808}
+letl tb {0x9000000000000000+$bar+0x3800}
+letl tbl {0x9000000000000000+$bar+0x3808}
+letl tdh {0x9000000000000000+$bar+0x3810}
+letl tdt {0x9000000000000000+$bar+0x3818}
+letl rdh {0x9000000000000000+$bar+0x2810}
+letl rdt {0x9000000000000000+$bar+0x2818}
+
+letl rbd $(d8q $rb 1)
+letl tbd $(d8q $tb 1)
+letl rbld $(d4q $rbl 1)
+letl tbld $(d4q $tbl 1)
+
+letl tdhd $(d4q $tdh 1)
+letl tdtd $(d4q $tdt 1)
+letl rdhd $(d4q $rdh 1)
+letl rdtd $(d4q $rdt 1)
+
+expr %"rb:0x%llx rdh:0x%x rdt 0x%x\ntb:0x%llx tdh:0x%x tdt:0x%x\n" $rbd $rdhd $rdtd $tbd $tdhd $tdtd
+
+do if $rbd
+echo "rx desc"
+expr %"d4 0x%llx 0x%x\n" $(bus2virt $rbd) {$rbld/4}
+end
+
+do if $tbd
+echo "tx desc"
+expr %"d4 0x%llx 0x%x\n" $(bus2virt $tbd) {$tbld/4}
+end
+
+ret
+
+function reboot_tos
+set_gpio_out 46 1
+set_gpio_out 47 0
+set_gpio_out 47 1
+ret
+
+function reboot1
+memset4 0xffffffffbff6c030 1 4
+ret
+
+function reboot2
+letl v $(d4q 0xffffffffbfd00204 1)
+m4 0xffffffffbfd00204 {$v|2}
+go
+ret
+
+function reboot
+m4 0xffffffffbff6c030 2
+m4 0xffffffffbff6c038 ${1:0x10000000}
+m4 0xffffffffbff6c034 1
+ret
+
+function poweroff
+m4 0xffffffffbff6c00c $(d4q 0xffffffffbff6c00c 1)
+m4 0xffffffffbff6c014 0x3c00
+ret
+
+
+letl i2creg 0xffffffffbfe01000;
+
+function i2c0_init
+ let i2creg {0xffffffffbfe01000+${1:0}*0x800};
+ m1 $(expr $i2creg+0x2) 0x0;
+ m1 $(expr $i2creg+0x0) 0x64;
+ m1 $(expr $i2creg+0x1) 0x02;
+ m1 $(expr $i2creg+0x2) 0x80;
+ret
+
+function i2c0_read
+letl cr dr adr reg count $(expr $i2creg+0x4) $(expr $i2creg+0x3) "$1" "$2" $(expr ($#>3)*($3-1)+1)
+do while $(expr $count>0)
+ m1 $dr $adr;
+ m1 $cr 0x90; 
+ while $(expr $(d1q  $cr 1)&0x2); 
+
+ m1 $dr $reg;
+ m1 $cr 0x10;
+ while $(expr $(d1q  $cr 1)&0x2); 
+
+ m1 $dr $(expr $adr|0x1)
+
+ m1 $cr 0x90;
+ while $(expr $(d1q  $cr 1)&0x2); 
+
+ m1 $cr 0x28;
+ while $(expr $(d1q  $cr 1)&0x2); 
+ 
+ echo_n $(d1q $dr 1) " "
+ 
+ m1 $cr 0x40;
+ while $(expr $(d1q  $cr 1)&0x40); 
+ letl reg count $(expr $reg+1) $(expr $count-1)
+end
+echo
+
+ret
+
+function i2c0_write
+letl cr dr adr reg val $(expr $i2creg+0x4) $(expr $i2creg+0x3) ${1:0} ${2:0} ${3:0}
+ m1 $dr $adr;
+ m1 $cr 0x90; 
+ while $(expr $(d1q  $cr 1)&0x2); 
+
+ m1 $dr $reg;
+ m1 $cr 0x10;
+ while $(expr $(d1q  $cr 1)&0x2); 
+
+
+ m1 $dr $val;
+ m1 $cr 0x10;
+ while $(expr $(d1q  $cr 1)&0x2); 
+
+ 
+ m1 $cr 0x40;
+ while $(expr $(d1q  $cr 1)&0x40); 
+
+ret
+
+function i2c0_read2a
+letl cr dr adr reg count $(expr $i2creg+0x4) $(expr $i2creg+0x3) "$1" "$2" $(expr ($#>3)*($3-1)+1)
+do while $(expr $count>0)
+ m1 $dr $adr;
+ m1 $cr 0x90; 
+ while $(expr $(d1q  $cr 1)&0x2); 
+
+ m1 $dr $reg>>8;
+ m1 $cr 0x10;
+ while $(expr $(d1q  $cr 1)&0x2); 
+
+ m1 $dr $reg;
+ m1 $cr 0x10;
+ while $(expr $(d1q  $cr 1)&0x2); 
+
+ m1 $dr $(expr $adr|0x1)
+
+ m1 $cr 0x90;
+ while $(expr $(d1q  $cr 1)&0x2); 
+
+ m1 $cr 0x28;
+ while $(expr $(d1q  $cr 1)&0x2); 
+ 
+ echo_n $(d1q $dr 1) " "
+ 
+ m1 $cr 0x40;
+ while $(expr $(d1q  $cr 1)&0x40); 
+ letl reg count $(expr $reg+1) $(expr $count-1)
+end
+echo
+
+ret
+
+function i2c0_write2a
+letl cr dr adr reg val $(expr $i2creg+0x4) $(expr $i2creg+0x3) ${1:0} ${2:0} ${3:0}
+ m1 $dr $adr;
+ m1 $cr 0x90; 
+ while $(expr $(d1q  $cr 1)&0x2); 
+
+ m1 $dr $reg>>8;
+ m1 $cr 0x10;
+ while $(expr $(d1q  $cr 1)&0x2); 
+
+ m1 $dr $reg;
+ m1 $cr 0x10;
+ while $(expr $(d1q  $cr 1)&0x2); 
+
+
+ m1 $dr $val;
+ m1 $cr 0x10;
+ while $(expr $(d1q  $cr 1)&0x2); 
+
+ 
+ m1 $cr 0x40;
+ while $(expr $(d1q  $cr 1)&0x40); 
+
+ret
+
+function i2c0_read2
+letl cr dr adr reg count $(expr $i2creg+0x4) $(expr $i2creg+0x3) "$1" "$2" $(expr ($#>3)*($3-1)+1)
+do while $(expr $count>0)
+ m1 $dr $adr;
+ m1 $cr 0x90; 
+ while $(expr $(d1q  $cr 1)&0x2); 
+
+ m1 $dr $reg;
+ m1 $cr 0x10;
+ while $(expr $(d1q  $cr 1)&0x2); 
+
+ m1 $dr $(expr $adr|0x1)
+
+ m1 $cr 0x90;
+ while $(expr $(d1q  $cr 1)&0x2); 
+
+ m1 $cr 0x20;
+ while $(expr $(d1q  $cr 1)&0x2); 
+ 
+ letl h $(d1q $dr 1)
+
+ m1 $cr 0x28;
+ while $(expr $(d1q  $cr 1)&0x2); 
+ 
+ letl l $(d1q $dr 1)
+
+ expr_n %"%04x " ($h<<8)|$l
+ 
+ m1 $cr 0x40;
+ while $(expr $(d1q  $cr 1)&0x40); 
+ letl reg count $(expr $reg+1) $(expr $count-1)
+end
+echo
+
+ret
+
+function i2c0_write2
+letl cr dr adr reg val $(expr $i2creg+0x4) $(expr $i2creg+0x3) ${1:0} ${2:0} ${3:0}
+ m1 $dr $adr;
+ m1 $cr 0x90; 
+ while $(expr $(d1q  $cr 1)&0x2); 
+
+ m1 $dr $reg;
+ m1 $cr 0x10;
+ while $(expr $(d1q  $cr 1)&0x2); 
+
+ m1 $dr {$val>>8};
+ m1 $cr 0x10;
+ while $(expr $(d1q  $cr 1)&0x2); 
+
+ m1 $dr {$val&0xff};
+ m1 $cr 0x10;
+ while $(expr $(d1q  $cr 1)&0x2); 
+
+ 
+ m1 $cr 0x40;
+ while $(expr $(d1q  $cr 1)&0x40); 
+
+ret
+
+
+function net
+let gmacreg $(pci_config_read 0 3 0 0x10 1)
+let base {($(pci_config_read 0 0x3 0 0x10)&~0xf)|0x9000000000000000}
+let txbasereg $(expr $gmacreg+0x1010)
+let txcurreg $(expr $gmacreg+0x1048)
+let rxbasereg $(expr $gmacreg+0x100c) 
+let rxcurreg $(expr $gmacreg+0x104c) 
+ret
+
+function exectest
+for letl p 0xffffffff90000000; $(expr $p<0xffffffffa0000000); letl p $(expr $p+0x100)
+set pc $p
+cont
+echo $p
+end
+
+ret
+
+dellabel cache_init
+
+function cache_init
+setconfig core.nocache 0
+setconfig cacheflush.nohelp_size 0x1000000
+letl addr size ${1:0x980000001fc00000} ${2:0x10000}
+
+cp0s 0 m8 16 $(expr $(cp0s 0 d8q 16 1)|3)
+
+cp0s 0
+m8 29 0
+m8 28 0
+mems
+
+
+letl size  0x4000
+for letl i 0;$(expr $i<4);letl i $(expr $i+1)
+cp0s 0 m8 26 0x22
+#Index_Store_Tag_D
+cache 9 $(expr $addr|$i) $size
+cp0s 0 m8 26 0
+#Index_Store_Tag_I
+cache 8 $(expr $addr|$i) $size
+end
+
+cp0s 0 m8 26 0x22
+letl size 0x40000
+for letl i 0;$(expr $i<4);letl i $(expr $i+1)
+#Index_Store_Tag_S
+cache 11 $(expr $addr|$i) $size
+end
+
+cp0s 0 m8 12 $(expr $(cp0s 0 d8q 12 1)|0xe0)
+ret
+
+function cache_dump
+setconfig core.nocache 0
+setconfig cacheflush.nohelp_size 0x1000000
+letl addr size ${1:0x980000001fc00000} ${2:0x8000}
+
+cp0s 0 m8 16 $(expr $(cp0s 0 d8q 16 1)|3)
+
+mems
+
+
+letl size  0x4000
+for letl i 0;$(expr $i<4);letl i $(expr $i+1)
+for letl j 0;{$j<0x10000};letl j {$j+32}
+#Index_Store_Tag_D
+cache 5 $(expr $addr+$j|$i) $size
+letl v $(cp0s 0 d8q 28 1)
+if $v expr %"%04x: %08x\n" {$addr+$j|$i} $v
+if {($j&0xff)==0} expr $j
+end
+end
+
+ret
+
+function cache_lock
+#cache 0x13 0xffffffff9fc00000 0x40000
+m8 0xffffffffbfe10200 0x800000001fc00000; 
+m8 0xffffffffbfe10240 0xfffffffffffc0000; 
+#smemset 0xffffffff9fc00000 0 0x40000
+ret
+
+
+
+function memtest_cachelock
+echo_on
+setconfig callbin.stacksize 0x1000
+cp0s 0 m8 16 $(expr $(cp0s 0 d8q 16 1)|3)
+cp0s 0 m8 12 $(expr $(cp0s 0 d8q 12 1)|0xe0)
+call cache_lock
+setconfig core.nocache 1
+setconfig helpaddr 0xffffffff9fc00000
+#memset4 0xffffffff9fc10000 0 0x30000
+#setconfig helpaddr 0xffffffff9fc30000
+#memset4 0xffffffff9fc00000 0 0x10000
+#setconfig helpaddr 0xffffffff9fc00000
+setconfig put.pack_size 0x10000
+setconfig usb_ejtag.put_speed 0x400
+Scallbin bin/memtest.bin-0x9fc00000
+ret
+
+function program_cachelock
+program_cachelock_bin:f
+m4 0xffffffffbfe10424 {$(d4q 0xffffffffbfe10424 1)|0x200}
+spi_memen
+letl file ${1:/tmp/gzrom.bin}
+cachelock_test:
+echo_on
+stop
+setconfig callbin.stacksize 0x1000
+m8 0xffffffffbfe10090 0x000000001fc000f2 0x000000001fc000f2
+#call cache_init
+cp0s 0 m8 16 $(expr $(cp0s 0 d8q 16 1)|3)
+cp0s 0 m8 12 $(expr $(cp0s 0 d8q 12 1)|0xe0)
+call cache_lock
+setconfig core.nocache 1
+setconfig helpaddr 0xffffffff9fc00000
+memset4 0xffffffff9fc10000 0 0x30000
+setconfig helpaddr 0xffffffff9fc30000
+memset4 0xffffffff9fc00000 0 0x10000
+setconfig helpaddr 0xffffffff9fc00000
+
+
+setconfig put.pack_size 0x10000
+setconfig usb_ejtag.put_speed 0x400
+#Scallbin bin/caclfreq.bin64-0x980000001fc00000
+setconfig spi.iobase $spibase
+setconfig flash.type byte
+spi_memen 0
+call spi_init $spi_speed
+#erase1
+erase
+letl len $(test -s $file)
+for letl i 0;{$i<$len};letl i {$i+0x10000}
+put $file 0x980000001fc10000 0x10000 $i
+do if $(test $0 == program_cachelock)
+program 0xffffffff9fc10000 $i $filesize
+else
+Scallbin bin/spi_st25vf064.bin64-0x980000001fc00000 $i 0xffffffff9fc10000 $filesize 0xffffffffbfe70000 ip
+end
+end
+ret
+
+
+function get_cachelock
+setconfig helpaddr 0x980000001fc00000
+cache_lock
+smemset8 0x980000001fc00000 0 0x800
+setconfig core.nocache 1
+setconfig get.pack_size 0x100000
+setconfig usb_ejtag.get_speed 0
+save
+save reg.dat
+get64 ${1:mem-0x9800000000000000.dat} ${2:0x9800000000000000} ${3:0x10000000}
+get64 ${1:mem-0x9800000110000000.dat} ${2:0x9800000110000000} ${3:0x1f0000000}
+ret
+
+function reset_lpc
+letl v $(d4q 0xffffffffbfd00200 1)
+m4 0xffffffffbfd00200 {$v|0x2000000}
+msleep 3000
+m4 0xffffffffbfd00200 {$v&~0x2000000}
+ret
+
+function enable_pcieclk
+m4 0xffffffffbfe10430 {$(d4q 0xffffffffbfe10430 1)|0x30000}
+ret
+
+function disable_pcieclk
+m4 0xffffffffbfe10430 {$(d4q 0xffffffffbfe10430 1)&~0x30000}
+ret
+
+function testpcie
+letl portnum ${1:0}
+letl portbase {0x400000*$portnum}
+
+m4 0xffffffffbfd0022c 0xf000000;
+m4 0xffffffffb811480c 0x2040f;
+m4 0xffffffffb8110011 0x21;
+m4 0xffffffffb8110010 0xa;
+m4 0xffffffffb8110111 0x21;
+m4 0xffffffffb8110110 0xa;
+m4 0xffffffffb8110211 0x21;
+m4 0xffffffffb8110210 0xa;
+m4 0xffffffffb8110311 0x21;
+m4 0xffffffffb8110310 0xa;
+
+m4 {0xffffffffb8118000+$portbase} 0xff204c;
+
+m4 {0xffffffffb81140a0+$portbase} 0xfc51;
+m4 {0xffffffffb8114708+$portbase} 0x7028004;
+ret
+
+function init_pcieport
+letl port ${1:0xe}
+letl base  ${2:0x10000000}
+letl pbase  {0x9000000000000000|$base}
+
+let d $(pci_config_read 0 $port 0 0x80c 1)
+pci_config_write 0 $port 0 0x80c {($d&0xfff9ffff)|0x20000}
+let d $(pci_config_read 0 $port 0 0x71c 1)
+pci_config_write 0 $port 0 0x71c {$d|(1<<26)}
+pci_config_write 0 $port 0 0x10 $base
+pci_config_write 0 $port 0 0x4 7
+let d $(d4q {$pbase+0x54})
+m4 {$pbase+0x54} {$d&~((0x7<<18)|(0x7<<2))}
+let d $(d4q {$pbase+0x58})
+m4 {$pbase+0x58} {$d&~((0x7<<18)|(0x7<<2))}
+
+
+ret
+
+function trainen_pcieport
+letl port ${1:0xe}
+letl pbase  ${2:0x10000000}
+#m4 $pbase 0xff2044
+m4 $pbase 0xff204c
+
+letl statreg  {$pbase|0xC}
+letl d0 0
+letl t {$TIME+5}
+do while {$TIME<$t}
+ letl d $(d4q $statreg 1)
+ if {$d!=$d0} echo $d
+ #if {$d==0x00000051} loop_break
+ if {($d!=0xffffffff)&&($d&0x40)} loop_break
+ letl d0 $d
+end
+
+ if {($d&0x40)==0} forcestate_pcieport $port $pbase 4
+ret
+
+
+function forcestate_pcieport
+letl port ${1:0xe}
+letl pbase  ${2:0x10000000}
+letl  d $(pci_config_read 0 $port 0 0x708 1)
+letl stat {${3:4}<<16}
+pci_config_write 0 $port 0 0x708 {$stat|$d}
+pci_config_write 0 $port 0 0x708 {0x8000|$stat|$d}
+msleep 500
+d4q  {$pbase|0xC} 1
+ret
+
+function init_pciephy
+m4 0xffffffffbfe10580 0xc2492331
+m4 0xffffffffbfe105a0 0xc2492331
+m4 0xffffffffbfe10584 0xff3ff0a8
+m4 0xffffffffbfe105a4 0xff3ff0a8
+
+m4 0xffffffffbfe10588 0x27fff
+m4 0xffffffffbfe105a8 0x27fff
+
+m8 0xffffffffbfe10590 0x14fff1002
+m8 0xffffffffbfe105b0 0x14fff1002
+
+m8 0xffffffffbfe10590 0x14fff1102
+m8 0xffffffffbfe105b0 0x14fff1102
+
+m8 0xffffffffbfe10590 0x14fff1202
+m8 0xffffffffbfe105b0 0x14fff1202
+
+m8 0xffffffffbfe10590 0x14fff1302
+m8 0xffffffffbfe105b0 0x14fff1302
+
+
+ret
+
+
+function pcie_train
+letl port ${1:0xe}
+letl base  ${2:0x10000000}
+letl pbase  {0x9000000000000000|$base}
+
+pci_config_write 0 2 0 0x10 0x1fe00000
+pci_config_write 0 2 0 4  2
+init_pciephy
+enable_pcieclk
+init_pcieport $port $base
+
+trainen_pcieport $port $pbase
+pci_config_write 0 $port 0  0x18 0x00010100
+msleep 3000
+pci_config_read 1 0 0 0 20
+ret
+
+function pcie_lookback
+m1 0xb8110011 0x2
+m1 0xb8110010 0x2
+ret
+
+
+source "scripts/gmac.cmd"
+letl base 0xffffffffbf020000
+letl phy 24
+#letl base {($(pci_config_read 0 0x3 0 0x10)&~0xf)|0x9000000000000000}
+
+
+function read_switch
+letl oldphy $phy
+let phy 0x1e
+letl page {$1>>8}
+letl a {$1&0xff}
+write_phy 16 {1|($page<<8)}
+write_phy 17 {2|($a<<8)}
+while {($(read_phy 17)&3)!=0}
+let @d $(read_phy 24 4)
+expr {$d0|($d1<<16)|($d2<<32)|($d3<<48)}
+let phy $oldphy
+ret
+
+function write_switch
+letl oldphy $phy
+let phy 0x1e
+letl page {$1>>8}
+letl a {$1&0xff}
+letl d $2
+write_phy 24 {$2&0xffff}
+write_phy 25 {($2>>16)&0xffff}
+write_phy 26 {($2>>32)&0xffff}
+write_phy 27 {($2>>48)&0xffff}
+write_phy 16 {1|($page<<8)}
+write_phy 17 {1|($a<<8)}
+while {($(read_phy 17)&3)!=0}
+let phy $oldphy
+ret
+
+function config_switch
+write_switch 0x8 0x1c
+write_switch 0xe 0x8b
+#write_switch 0xe 0x87
+write_switch 0x2888 0
+write_switch 0x200 0x82
+write_switch 0xb 7
+write_switch 0x60 3
+write_switch 0x0203 0x2
+ret
+
+
+function set_gpio_out
+letl pin val ${1:0} ${2:0}
+letl off {($pin/32)*4}
+letl pin {$pin%32}
+letl dir {0xffffffffbfe10500+$off}
+letl out {0xffffffffbfe10510+$off}
+
+m4 $dir {$(d4q $dir 1)&(~(1<<$pin))}
+do if $val
+m4 $out {$(d4q $out 1)|(1<<$pin)}
+else
+m4 $out {$(d4q $out 1)&~(1<<$pin)}
+end
+ret
+
+source scripts/nand.cmd
+letl ncmd 0xffffffffbfe06000
+letl orderreg 0xffffffffbfe10c00
+source scripts/spi.cmd
+let spibase 0xffffffffbfd00000
+let spi_cs 0
+
+function vxworks0
+setconfig core.abisize 32
+gdbmap add 0xffffffffc0000000 0x10000000 0xffffffff80000000
+gdbmap add 0x40000000 0x40000000 0x40000000
+gdbmap add 0xffffffffffff8000 0x8000	 0xffffffff80008000
+#setconfig gdbserver.helpaccess 1
+ret
+
+function vxworks
+setconfig core.abisize 32
+gdbmap add 0 -1 0
+gdbmap del 0 0x1000
+#gdbmap add 0xffffffffc0000000 0x18000000 0xffffffffc0000000
+#gdbmap add 0x00000000 0x80000000 0x00000000
+#gdbmap add 0xffffffffffff8000 0x8000	 0xffffffff80008000
+##setconfig gdbserver.helpaccess 1
+ret
+
+function vxworks1
+setconfig core.abisize 32
+gdbmap add 0x00000000 0x10000000 0xffffffff80000000
+gdbmap add 0x10000000 0x70000000 0x9800000090000000
+gdbmap add 0xffffffffffff8000 0x8000	 0xffffffff80008000
+#setconfig gdbserver.helpaccess 1
+ret
+
+function stfillbuffer_disable
+letl v {$(cp0s 6 d4q 16 1)&~0x100}
+cp0s 6 m4 16 $v
+ret
+
+function config_ls2k_xbar
+m8 0xffffffffbfe10020 0;m8 0xffffffffbfe10060 0;m8 0xffffffffbfe100a0 0xf2
+ret
+
+dellabel gdb_module_setup
+function gdb_module_setup
+>> gdb.cmd echo monitor python pgdorder=0
+>> gdb.cmd echo monitor python pteshift=8
+ret
+
+
+#acpi_gmac_suspend()
+#{
+#devmem 0x4004002c 32 $(($(devmem 0x4004002c)|0x203))
+#devmem 0x4005002c 32 $(($(devmem 0x4005002c)|0x203))
+#devmem 0x1fe0702c 32 0x70
+#devmem 0x1fe07028 32 0x0000ffff
+#devmem 0x1fe0700c 32 0x0000ffff
+#devmem 0x1fe07008 32 $(($(devmem 0x1fe07008)|0x80))
+#devmem 0x1fe07004 32 $(($(devmem 0x1fe07004)|0x80))
+#devmem 0x1fe07014 32 $(((1<<13)|(${1:-5}<<10)))
+#}
+
+
+
+function acpi_suspend
+letl acpibase 0xffffffffbff6c000 
+letl GPE0_EN  {$acpibase+0x2c}
+letl GPE0_STS {$acpibase+0x28}
+letl PM1_STS  {$acpibase+0xc}
+letl PM1_CNT  {$acpibase+0x14}
+letl PM1_EN  {$acpibase+0x10}
+letl PMCON_RESUME  {$acpibase+0x4}
+
+m4 $GPE0_EN  0xfd70;
+m4 $GPE0_STS 0x0000ffff
+m4 $PM1_STS  0x0000ffff
+m4 $PMCON_RESUME {$(d4q $PMCON_RESUME 1)|0x2880}
+m4 $PM1_EN {$(d4q $PM1_EN 1)|0x400}
+m4 $PM1_CNT  0x00003400
+ret
+
+function rtc_wake
+letl t ${1:10}
+rtc_set 2020 5 1 0 0 0 
+rtc_alarmset 2020 5 {1+$t/3600/24} {($t/3600)%24} {($t/60)%60} {$t%60}
+acpi_suspend
+ret
+
+function wdt_close
+set_gpio_out 3 0
+ret
+
+function cachedump
+setconfig putelf.uncached 2
+setconfig helpaddr 0xffffffffa000f000
+setconfig usb_ejtag.put_speed 0x100
+> ${TIME+cachedump-%Y%m%d-%H%M%S.txt} Scallbin bin/cachedump-ls2k.bin64 
+ret
+
+function cachedump1
+setconfig putelf.uncached 2
+setconfig helpaddr 0xffffffffa000f000
+setconfig usb_ejtag.put_speed 0x100
+setconfig jtag.waitacc_count -1
+Scallbin bin/cachedump-ls2k.bin64 0xffffffffaf900000
+get ${TIME+cachedump-%Y%m%d-%H%M%S.txt} 0xffffffffaf900000 {$(setconfig callbin.retval)&0xffffffff}
+ret
+
+function lio_config
+letl width8 speed ${1:0} ${2:0}
+m4  0xffffffffbfe10420 {$(d4q 0xffffffffbfe10420 1)|0x80}
+m4 0xffffffffbfe10424 {($(d4q 0xffffffffbfe10424 1)|(1<<31)|(1<<29)|(1<<23))^(($width8<<29)|($width8<<23))}
+m4 0xffffffffbfe104d0 {($(d4q 0xffffffffbfe104d0 1)&~0x700)|(($speed&7)<<8)}
+ret
+
+function lio_cmd
+do while {$#>1}
+  m2 {0xffffffffbc000000+${1}*2} $2
+  shift 2
+end
+ret
+
+function lio_id
+lio_cmd 0x555 0xaa 0x2aa 0x55 0x555 0x90
+d1 0xffffffffbc000000 8
+lio_cmd 0 0xf0
+ret
+
+function pr2_func
+#lsu-clk 25MHz cfg
+m4 0xffffffffbfe10428 0x67ffffff
+#print cachecoherent
+m4 0xffffffffbfe10110 0x00013fe8
+
+#print pins mux cfg
+m4 0xffffffffbfe104c0 0x11115555
+m4 0xffffffffbfe104c4 0x11111111
+m4 0xffffffffbfe104c8 0x11111111
+m4 0xffffffffbfe104cc 0x11111111
+m4 0xffffffffbfe104d0 0x11111111
+m4 0xffffffffbfe104d4 0x41111111
+
+#gpio 0/1 cfg
+m4 0xffffffffbfe104b8 0x5555
+m4 0xffffffffbfe10450 0xfffff
+m4 0xffffffffbfe10460 0x0
+#print ger cfg
+
+#lsu0
+m4 0xffffffffbf0c0040 0x100
+m4 0xffffffffbf0c0260 0x40
+m4 0xffffffffbf0c00e0 0x1
+m4 0xffffffffbf0c0100 0x64
+m4 0xffffffffbf0c0120 0x1770
+m4 0xffffffffbf0c0140 0x64  
+m4 0xffffffffbf0c0160 0x1770
+m4 0xffffffffbf0c02a0 0x30d40
+m4 0xffffffffbf0c0250 0xa28  
+m4 0xffffffffbf0c02d4 0x3  
+m4 0xffffffffbf0c02dc 0x3
+m4 0xffffffffbf0c02e0 0x1
+m4 0xffffffffbf0c0060 0x2
+m4 0xffffffffbf0c0080 0x1302
+m4 0xffffffffbf0c00a0 0x1   
+m4 0xffffffffbf0c00c0 0x1b68
+m4 0xffffffffbf0c0180 0x2000000
+m4 0xffffffffbf0c01a0 0x260    
+m4 0xffffffffbf0c01c0 0x1b68
+m4 0xffffffffbf0c0280 0x0   
+m4 0xffffffffbf0c0300 0x1e8480
+m4 0xffffffffbf0c0320 0x3d0900
+m4 0xffffffffbf0c02c4 0x3     
+m4 0xffffffffbf0c02c8 0x3
+m4 0xffffffffbf0c0240 0x1000
+m4 0xffffffffbf0c0220 0xff0000
+
+#lsu1
+m4 0xffffffffbf0c0044 0x100
+m4 0xffffffffbf0c0264 0x40
+m4 0xffffffffbf0c00e4 0x1
+m4 0xffffffffbf0c0104 0x64
+m4 0xffffffffbf0c0124 0x1770
+m4 0xffffffffbf0c0144 0x64  
+m4 0xffffffffbf0c0164 0x1770
+m4 0xffffffffbf0c02a4 0x30d40
+m4 0xffffffffbf0c0254 0xa28  
+m4 0xffffffffbf0c02d4 0x3  
+m4 0xffffffffbf0c02dc 0x3
+m4 0xffffffffbf0c02e0 0x1
+m4 0xffffffffbf0c0064 0x16
+m4 0xffffffffbf0c0084 0x1316
+m4 0xffffffffbf0c00a4 0x1   
+m4 0xffffffffbf0c00c4 0x1b68
+m4 0xffffffffbf0c0184 0x2000000
+m4 0xffffffffbf0c01a4 0x260    
+m4 0xffffffffbf0c01c4 0x1b68
+m4 0xffffffffbf0c0284 0x0   
+m4 0xffffffffbf0c0304 0xef9020
+m4 0xffffffffbf0c0324 0xf42400
+m4 0xffffffffbf0c02c4 0x3     
+m4 0xffffffffbf0c02c8 0x3
+m4 0xffffffffbf0c0240 0x1000
+m4 0xffffffffbf0c0220 0xff0000
+cont
+ret
+
+function pr4_func
+#lsu-clk 25MHz cfg
+m4 0xffffffffbfe10428 0x67ffffff
+#print cachecoherent
+m4 0xffffffffbfe10110 0x00013fe8
+
+#print pins mux cfg
+m4 0xffffffffbfe104c0 0x11115555
+m4 0xffffffffbfe104c4 0x11111111
+m4 0xffffffffbfe104c8 0x11111111
+m4 0xffffffffbfe104cc 0x11111111
+m4 0xffffffffbfe104d0 0x11111111
+m4 0xffffffffbfe104d4 0x41111111
+
+#gpio 0/1/2/3 cfg
+m4 0xffffffffbfe104b8 0x5555
+m4 0xffffffffbfe10450 0xfffff
+m4 0xffffffffbfe10460 0x0
+
+#print ger cfg
+#m4 0xffffffffbf0c0040 0x120
+m4 0xffffffffbf0c0040 0x100
+m4 0xffffffffbf0c0044 0x120
+m4 0xffffffffbf0c0050 0x120
+m4 0xffffffffbf0c0054 0x120
+m4 0xffffffffbf0c00e0 0x1  
+m4 0xffffffffbf0c00e4 0x1
+m4 0xffffffffbf0c00f0 0x1
+m4 0xffffffffbf0c00f4 0x1
+m4 0xffffffffbf0c0100 0x92
+m4 0xffffffffbf0c0104 0x92
+m4 0xffffffffbf0c0110 0xe5
+m4 0xffffffffbf0c0114 0xe5
+m4 0xffffffffbf0c0120 0x2ea1
+m4 0xffffffffbf0c0124 0x2e3c
+m4 0xffffffffbf0c0130 0x2ee2
+m4 0xffffffffbf0c0134 0x2e3c
+m4 0xffffffffbf0c0140 0x92
+m4 0xffffffffbf0c0144 0x92
+m4 0xffffffffbf0c0150 0xe5  
+m4 0xffffffffbf0c0154 0xe5
+m4 0xffffffffbf0c0160 0x2ea1
+m4 0xffffffffbf0c0164 0x2e3c
+m4 0xffffffffbf0c0170 0x2ee2
+m4 0xffffffffbf0c0174 0x2e3c
+m4 0xffffffffbf0c02a0 0xd1  
+m4 0xffffffffbf0c02a4 0xd1
+m4 0xffffffffbf0c02b0 0xd1
+m4 0xffffffffbf0c02b4 0xd1
+m4 0xffffffffbf0c0250 0x13d1
+m4 0xffffffffbf0c0254 0x13d1
+m4 0xffffffffbf0c02dc 0x11
+m4 0xffffffffbf0c02e0 0x1
+m4 0xffffffffbf0c0060 0xc3
+m4 0xffffffffbf0c0064 0xea
+m4 0xffffffffbf0c0070 0xbe
+m4 0xffffffffbf0c0074 0xe6
+m4 0xffffffffbf0c0080 0x1400
+m4 0xffffffffbf0c0084 0x1400
+m4 0xffffffffbf0c0090 0x1400
+m4 0xffffffffbf0c0094 0x1400
+m4 0xffffffffbf0c00a0 0x0   
+m4 0xffffffffbf0c00a4 0x0
+m4 0xffffffffbf0c00b0 0x0
+m4 0xffffffffbf0c00b4 0x0
+m4 0xffffffffbf0c00c0 0xdb4
+m4 0xffffffffbf0c00c4 0xdb4
+m4 0xffffffffbf0c00d0 0xdb4
+m4 0xffffffffbf0c00d4 0xdb4
+m4 0xffffffffbf0c0180 0x2000000
+m4 0xffffffffbf0c0184 0x2000000
+m4 0xffffffffbf0c0190 0x2000280
+m4 0xffffffffbf0c0194 0x2000280
+#m4 0xffffffffbf0c01a0 0x500    
+m4 0xffffffffbf0c01a0 0x4c0    
+m4 0xffffffffbf0c01a4 0x500
+m4 0xffffffffbf0c01b0 0x500
+m4 0xffffffffbf0c01b4 0x500
+m4 0xffffffffbf0c01c0 0xdb4
+m4 0xffffffffbf0c01c4 0xdb4
+m4 0xffffffffbf0c01d0 0xdb4
+m4 0xffffffffbf0c01d4 0xdb4
+m4 0xffffffffbf0c0260 0x40  
+m4 0xffffffffbf0c0264 0x40  
+m4 0xffffffffbf0c0270 0x40  
+m4 0xffffffffbf0c0274 0x40  
+m4 0xffffffffbf0c0280 0x1  
+m4 0xffffffffbf0c0284 0x1
+m4 0xffffffffbf0c0290 0x1
+m4 0xffffffffbf0c0294 0x1
+#m4 0xffffffffbf0c0300 0x15580ff
+m4 0xffffffffbf0c0300 0x719f80
+m4 0xffffffffbf0c0304 0x719f80
+m4 0xffffffffbf0c0310 0x15580ff
+m4 0xffffffffbf0c0314 0x719f80 
+#m4 0xffffffffbf0c0320 0x1753e00
+m4 0xffffffffbf0c0320 0x915c80
+m4 0xffffffffbf0c0324 0x915c80 
+m4 0xffffffffbf0c0330 0x166e300
+m4 0xffffffffbf0c0334 0x8bc540 
+m4 0xffffffffbf0c0240 0x1000   
+m4 0xffffffffbf0c0220 0xff0000
+m4 0xffffffffbf0c0220 0x0     
+#m4 0xffffffffbf0c02c0 0xcc
+m4 0xffffffffbf0c02c0 0xfe
+m4 0xffffffffbf0c02c4 0xff
+m4 0xffffffffbf0c02c8 0xff
+cont
+ret
+
+function lsu_st
+m4 0xffffffffbf0c0240 0x100
+m4 0xffffffffbf0c0240 0x101
+m4 0xffffffffbfe10460 0x300000
+cont
+ret
+
+function lsu_end
+m4 0xffffffffbf0c0240 0x1000
+m4 0xffffffffbfe10460 0x0
+cont
+ret
+
+function jbig_func
+m4 0xffffffffbf0c201c 0x01
+m4 0xffffffffbf0c2000 0x1f1
+m4 0xffffffffbf0c2004 0x1000000
+m4 0xffffffffbf0c2008 0xffffffff
+m4 0xffffffffbf0c200c 0x2000000
+m4 0xffffffffbf0c2010 0x01
+cont
+ret
+function runlinux
+inputserial "c\b" 0xffffffffbff40805 0xffffffffbff40800
+inputserial "devls\n" 0xffffffffbff40805 0xffffffffbff40800
+put /tmp/vmlinuz 0xffffffff88000000
+go
+inputserial "load /dev/ram@0x88000000\n" 0xffffffffbff40805 0xffffffffbff40800
+inputserial "initrd (usb0,0)/boot/rootfs.cpio.lzma\n" 0xffffffffbff40805 0xffffffffbff40800
+inputserial "g console=ttyS0,115200 initcall_debug=1 loglevel=20 maxcpus=1\n" 0xffffffffbff40805 0xffffffffbff40800
+ret
+
+function test_pcidma
+d4 0x900000001fe10110 1
+letl pbase ${1:0x9000000000000000}
+letl src dst len cmd 0x0f000000 0x0f001000 0x7f0 0x3b
+select_pci
+pci_config_write 0 0xa 0 4 7
+letl bar0 $(pci_config_read 0 0xa 0 0x10 1)
+letl bar1 $(pci_config_read 0 0xa 0 0x14 1)
+do if {($bar0&~0xf)==0}
+pci_config_write 0 0xa 0 0x10 0x20000000
+pci_config_write 0 0xa 0 0x14 0x20002000
+end
+#memtest1 {0xa0000000+$src} {0xa0000000+$src+$len} {0xa0000000+$src} 4
+for letl a $src;{$a<($src+$len)};letl a {$a+4}
+m4 {$pbase|$a} $a
+end
+smemset4 {$pbase+$dst} 0 $len
+letl pbar0 {($bar0&~0xf)|$pbase}
+letl pbar1 {($bar1&~0xf)|$pbase}
+m4 {$pbar0+0x1ec} 1
+d4 {$pbase+$src} 8
+d4 {$pbase+$dst} 8
+m4 $pbar1 {$src|0x80000000} {$dst|0x80000000} $len $cmd
+msleep 2000
+d4 {$pbase+$dst} 8
+smemcmp4 {$pbase+$src} {$pbase+$dst} $len
+smemcpy4 {$pbase+$src+0x20} {$pbase+$src} $len
+m4 {$pbar1+0xc} $cmd
+msleep 2000
+smemcmp4 {$pbase+$src} {$pbase+$dst} $len
+ret
+
+info f
+echo_off
+

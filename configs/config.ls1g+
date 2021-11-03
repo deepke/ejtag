@@ -1,0 +1,679 @@
+echo_on
+setconfig core.cpucount 2
+setconfig jtag.useall 0
+setenv ENV_memsize 256
+setenv ENV_cpuclock 400000000
+
+dellabe configddr
+function configddr
+resetcpu
+m4 0xbfd00420 0
+ddr2_config configs/ddr2.ls1gp.txt
+m4 0xff200028 0
+memtest 0xa0000000 0xa0000100
+if $(d4q 0xff20001c 1) ret;
+m4 0xff200030 0
+memtest1 0xa0000000 0xa0100000 0xa0000000 0x200
+if $(d4q 0xff200020 1) ret;
+ret
+
+dellabe configddr2
+function configddr2
+reset
+#m4 0xbfd01108 {$(d4q 0xbfd01108 1)|0x884a}
+#m4 0xb08000c4 {$(d4q 0xb08000c4 1)|0xff00}
+m4 0xb08000cc 0
+m4 0xaff00000 0x00000000
+m4 0xaff00004 0x03000000
+m4 0xaff00008 0x00000000
+m4 0xaff0000c 0x00000000
+m4 0xaff00010 0x00000000
+m4 0xaff00014 0x00000000
+m4 0xaff00018 0x16100000
+m4 0xaff0001c 0x50505050
+m4 0xaff00020 0x01000101
+m4 0xaff00024 0x02010002
+m4 0xaff00028 0x02010100
+m4 0xaff0002c 0x02020000
+m4 0xaff00030 0x03020202
+m4 0xaff00034 0x00000000
+m4 0xaff00038 0x20381800
+m4 0xaff0003c 0x00000020
+m4 0xaff00040 0x01000101
+m4 0xaff00044 0x02010002
+m4 0xaff00048 0x02010100
+m4 0xaff0004c 0x02020000
+m4 0xaff00050 0x03020202
+m4 0xaff00054 0x00000000
+m4 0xaff00058 0x20381800
+m4 0xaff0005c 0x00000020
+m4 0xaff00060 0x01000101
+m4 0xaff00064 0x02010002
+m4 0xaff00068 0x02010100
+m4 0xaff0006c 0x02020000
+m4 0xaff00070 0x03020202
+m4 0xaff00074 0x00000000
+m4 0xaff00078 0x20301000
+m4 0xaff0007c 0x00000020
+m4 0xaff00080 0x01000101
+m4 0xaff00084 0x02010002
+m4 0xaff00088 0x02010100
+m4 0xaff0008c 0x02020000
+m4 0xaff00090 0x03020202
+m4 0xaff00094 0x00000000
+m4 0xaff00098 0x20301000
+m4 0xaff0009c 0x00000020
+m4 0xaff000a0 0x01000101
+m4 0xaff000a4 0x02010002
+m4 0xaff000a8 0x02010100
+m4 0xaff000ac 0x02020000
+m4 0xaff000b0 0x03020202
+m4 0xaff000b4 0x00000000
+m4 0xaff000b8 0x20301000
+m4 0xaff000bc 0x00000020
+m4 0xaff000c0 0x01000101
+m4 0xaff000c4 0x02010002
+m4 0xaff000c8 0x02010100
+m4 0xaff000cc 0x02020000
+m4 0xaff000d0 0x03020202
+m4 0xaff000d4 0x00000000
+m4 0xaff000d8 0x20301000
+m4 0xaff000dc 0x00000020
+m4 0xaff000e0 0x01000101
+m4 0xaff000e4 0x02010002
+m4 0xaff000e8 0x02010100
+m4 0xaff000ec 0x02020000
+m4 0xaff000f0 0x03020202
+m4 0xaff000f4 0x00000000
+m4 0xaff000f8 0x20301000
+m4 0xaff000fc 0x00000020
+m4 0xaff00100 0x01000101
+m4 0xaff00104 0x02010002
+m4 0xaff00108 0x02010100
+m4 0xaff0010c 0x02020000
+m4 0xaff00110 0x03020202
+m4 0xaff00114 0x00000000
+m4 0xaff00118 0x20301000
+m4 0xaff0011c 0x00000020
+m4 0xaff00120 0x01000101
+m4 0xaff00124 0x02010002
+m4 0xaff00128 0x02010100
+m4 0xaff0012c 0x02020000
+m4 0xaff00130 0x03020202
+m4 0xaff00134 0x00000000
+m4 0xaff00138 0x207f6000
+m4 0xaff0013c 0x00000020
+m4 0xaff00140 0x01ff01ff
+m4 0xaff00144 0x04030000
+m4 0xaff00148 0x00010100
+m4 0xaff0014c 0x00000000
+m4 0xaff00150 0xf0020000
+m4 0xaff00154 0x00000000
+m4 0xaff00158 0xf0000000
+m4 0xaff0015c 0x00000000
+m4 0xaff00160 0x00010001
+m4 0xaff00164 0x00000000
+m4 0xaff00168 0x01010101
+m4 0xaff0016c 0x14000007
+m4 0xaff00170 0x84210501
+m4 0xaff00174 0x84210500
+m4 0xaff00178 0x00000000
+m4 0xaff0017c 0x00000000
+m4 0xaff00180 0x01100000
+m4 0xaff00184 0x00000000
+m4 0xaff00188 0x00000000
+m4 0xaff0018c 0x00000000
+m4 0xaff00190 0x00000000
+m4 0xaff00194 0x00000000
+m4 0xaff00198 0x00000000
+m4 0xaff0019c 0x00000000
+m4 0xaff001a0 0x00060940
+m4 0xaff001a4 0x00000008
+m4 0xaff001a8 0x00060940
+m4 0xaff001ac 0x00000008
+m4 0xaff001b0 0x00060940
+m4 0xaff001b4 0x00000008
+m4 0xaff001b8 0x00060940
+m4 0xaff001bc 0x00000008
+m4 0xaff001c0 0x02041904
+m4 0xaff001c4 0x1b425b08
+m4 0xaff001c8 0x10564080
+m4 0xaff001cc 0x10040808
+m4 0xaff001d0 0x00000014
+m4 0xaff001d4 0x08020701
+m4 0xaff001d8 0x08060404
+m4 0xaff001dc 0x0d040804
+m4 0xaff001e0 0x00000000
+m4 0xaff001e4 0x05030000
+m4 0xaff001e8 0x00010000
+m4 0xaff001ec 0x030a0000
+m4 0xaff001f0 0xff030101
+m4 0xaff001f4 0x000801e4
+m4 0xaff001f8 0x04081001
+m4 0xaff001fc 0x00000000
+m4 0xaff00200 0x0c000c00
+m4 0xaff00204 0x0c000c00
+m4 0xaff00208 0x00000000
+m4 0xaff0020c 0x0c000c00
+m4 0xaff00210 0x02030006
+m4 0xaff00214 0x0008000d
+m4 0xaff00218 0x00030106
+m4 0xaff0021c 0x0008000b
+m4 0xaff00220 0x00030106
+m4 0xaff00224 0x0008000b
+m4 0xaff00228 0x00030106
+m4 0xaff0022c 0x0008000b
+m4 0xaff00230 0x00000000
+m4 0xaff00234 0x0fff0000
+m4 0xaff00238 0x0000ff00
+m4 0xaff0023c 0x0ffffe00
+m4 0xaff00240 0x0000ff00
+m4 0xaff00244 0x0ffffe00
+m4 0xaff00248 0x0000ff00
+m4 0xaff0024c 0x0ffffe00
+m4 0xaff00250 0x00000000
+m4 0xaff00254 0x00000000
+m4 0xaff00258 0x00000000
+m4 0xaff0025c 0x00000000
+m4 0xaff00260 0x00000000
+m4 0xaff00264 0x00000000
+m4 0xaff00268 0x00000000
+m4 0xaff0026c 0x00000000
+m4 0xaff00270 0x00000000
+m4 0xaff00274 0x00000010
+m4 0xaff00278 0x00000000
+m4 0xaff0027c 0x00000000
+m4 0xaff00280 0x00000000
+m4 0xaff00284 0x00000000
+m4 0xaff00288 0x00000000
+m4 0xaff0028c 0x00000000
+m4 0xaff00290 0x00000000
+m4 0xaff00294 0x00000000
+m4 0xaff00298 0x00000000
+m4 0xaff0029c 0x00000000
+m4 0xaff002a0 0x00000000
+m4 0xaff002a4 0x00000000
+m4 0xaff002a8 0x00000000
+m4 0xaff002ac 0x00000000
+m4 0xaff002b0 0x00000000
+m4 0xaff002b4 0x00000000
+m4 0xaff002b8 0x00000000
+m4 0xaff002bc 0x00000000
+m4 0xaff002c0 0x00000000
+m4 0xaff002c4 0x00000000
+m4 0xaff002c8 0x00000000
+m4 0xaff002cc 0x00000000
+m4 0xaff002d0 0x00000000
+m4 0xaff002d4 0x00000000
+m4 0xaff002d8 0x00000000
+m4 0xaff002dc 0x00000000
+m4 0xaff002e0 0x00000000
+m4 0xaff002e4 0x00000000
+m4 0xaff002e8 0x00000000
+m4 0xaff002ec 0x00000000
+m4 0xaff002f0 0x00000000
+m4 0xaff002f4 0x00000000
+m4 0xaff002f8 0x00000000
+m4 0xaff002fc 0x00000000
+m4 0xaff00300 0x00000000
+m4 0xaff00304 0x00000000
+m4 0xaff00308 0x00000000
+m4 0xaff0030c 0x00000000
+m4 0xaff00310 0x00000000
+m4 0xaff00314 0x00000000
+m4 0xaff00318 0x00000000
+m4 0xaff0031c 0x00000000
+m4 0xaff00320 0x00006000
+m4 0xaff00324 0x08083010
+m4 0xaff00328 0x00000010
+m4 0xaff0032c 0x00000000
+m4 0xaff00330 0x000009e0
+m4 0xaff00334 0x00000110
+m4 0xaff00338 0x00000000
+m4 0xaff0033c 0x00000010
+m4 0xaff00340 0x00070f01
+m4 0xaff00344 0x00c34fff
+m4 0xaff00348 0x00000000
+m4 0xaff0034c 0x00000000
+m4 0xaff00350 0xffffffff
+m4 0xaff00354 0xffffffff
+m4 0xaff00358 0x0001ffff
+m4 0xaff0035c 0x00000000
+m4 0xaff00360 0x00000000
+m4 0xaff00364 0x00000000
+m4 0xaff00368 0x00000000
+m1 0xaff00018 0x1
+while {$(d1q 0xaff00163 1)!=1}
+#m4 0xb08000cc 1
+#memtest1 0xa0000000 0xa0100000 0xa0000000 0x200
+memtest 0xa0000000 0xa0000080
+ret
+
+function erase
+spi_sst_wen
+setconfig flash.type byte
+erase
+m1 0xbfe80004 0x21
+ret
+
+function program
+setconfig helpaddr 0xb0000000
+let spibase 0xbfe80000
+setconfig spi.iobase $spibase
+spi_sst_wen
+#setconfig flash.type st25vf080
+setconfig flash.type byte
+erase
+msleep 1000
+put ${1:/tmp/gzrom.bin} 0x81000000
+program 0x81000000 0 $filesize
+ret
+
+function program1
+setconfig helpaddr 0xb0000000
+let spibase 0xbfe80000
+setconfig spi.iobase $spibase
+letl f ${1:/tmp/gzrom.bin}
+setconfig flash.type byte
+erase
+put $f 0x81000000
+callbin bin/spi_st25vf064.bin 0 0x81000000 $filesize
+m1 0xbfe80004 0x21
+ret
+
+function program2
+setconfig helpaddr 0xb0000000
+let spibase 0xbfe80000
+setconfig spi.iobase $spibase
+letl f ${1:/tmp/gzrom.bin}
+setconfig flash.type byte
+#erase
+put $f 0x81000000
+callbin bin/spi_st25vf064.bin 0x80000 0x81000000 $filesize $spibase iep
+m1 0xbfe80004 0x21
+ret
+
+
+function program_sram
+setconfig helpaddr 0xb0000000
+let spibase 0xbfe80000
+setconfig spi.iobase $spibase
+letl file ${1:/tmp/gzrom.bin}
+setconfig flash.type byte
+call spi_init $spi_speed
+spi_sst_wen
+erase
+map $file 0xff240000
+do if {$#>2}
+program 0xff240000 0 $2
+else
+program 0xff240000 0 $(test -s $file)
+end
+m1 0xbfe80004 0x21
+ret
+
+function program_sram1
+setconfig helpaddr 0xb0000000
+let spibase 0xbfe80000
+setconfig spi.iobase $spibase
+letl f ${1:/tmp/gzrom.bin}
+setconfig flash.type byte
+call spi_init $spi_speed
+erase
+map $f 0xff240000
+callbin bin/spi_st25vf064.bin 0 0xff240000 $(test -s $f) $spibase
+m1 {$spibase+4} 0x21
+ret
+
+function program_sub2
+letl f ${1:/tmp/main.bin}
+cpu 1
+setconfig helpaddr 0x80000000
+setconfig flash.type byte
+setconfig spi.iobase 0xbfe70000
+let spibase 0xbfe70000
+spi_sst_wen
+call spi_init $spi_speed
+erase
+map $f 0xff240000
+program 0xff240000 0 $(test -s $f)
+m1 0xbfe70004 0x21
+ret
+
+function putelf_sub2
+setconfig helpaddr 0x80003000
+putelf $1
+ret
+
+function program_cachelock
+letl f ${1:/tmp/gzrom.bin}
+letl s $(test -s $f)
+#hb 0 0xffffffff
+#watch 0 0xffffffff
+setconfig core.nocache 0
+cache_init
+setconfig flash.type byte
+erase
+map bin/spi.BIN 0xff210000
+letl len $(test -s bin/spi.BIN)
+sprogram 0xff210000 0  $len
+unmap
+m1 0xbfe80004 0x1
+cache 28 0x9fc00000 $len
+map $f 0xff240000
+erase
+setconfig core.nocache 1
+scallmem 0x9fc00000 0xff240000 0 $s
+setconfig core.nocache 0
+unmap
+ret
+
+function fpga
+letl tt $(test -s fpga-rom.bin)
+callbin bin/fpga.bin i
+for letl l 0;{$l<$tt};letl l {$l+0x80000}
+put fpga-rom.bin 0x9f410000  0x80000 $l
+ do if {$filesize<0x80000}
+  callbin bin/fpga.bin P 0x9f410000 $filesize
+ else
+  callbin bin/fpga.bin p 0x9f410000 $filesize
+ end
+end
+ret
+
+function fpga1
+letl tt $(test -s fpga-rom.bin)
+callbin bin/fpga.bin i
+for letl l 0;{$l<$tt};letl l {$l+0x80000}
+put fpga-rom.bin 0x9f410000  0x80000 $l
+callbin bin/fpga.bin p 0x9f410000 $filesize
+end
+callbin bin/fpga.bin c
+ret
+
+function testserial
+echo_on
+letl defbaud {33333333/16/9600}
+letl baud ${1:$defbaud}
+letl @a 0xbfe40000 0xbfe44000 0xbfe48000 0xbfe4c000 
+
+
+
+for letl i 0; {$i<2};letl i {%%d $i+1}
+letl base ${a$i}
+m1 {$base+2} 0x47
+m1 {$base+3} 0x80
+m1 {$base+0} {$baud&0xff} {($baud>>8)&0xff}
+m1 {$base+3} 3
+m1 {$base+4} 3
+m1 {$base+1} 0
+end
+
+letl j 0
+
+do while 1
+
+letl j {($j+1)%10}
+
+for letl i 0; {$i<${@a}};letl i {%%d $i+1}
+letl base ${a$i}
+m1 $base {0x61+$i}
+m1 $base {0x30+$j}
+m1 $base 0xd
+m1 $base 0xa
+end
+
+end
+ret
+
+
+function testserial1
+letl defbaud {33333333/16/9600}
+letl baud ${1:$defbaud}
+letl base ${2:0xbfe44000}
+
+
+do while 1:
+m1 {$base+2} 0x47
+m1 {$base+3} 0x80
+m1 {$base+0} {$baud&0xff} {($baud>>8)&0xff}
+m1 {$base+3} 3
+m1 {$base+4} 3
+m1 {$base+1} 0
+
+letl str $(expr "%%04d" $baud)
+echo $str
+for letl i 1;{$i<5};letl i {$i+1}
+m1 $base {$(expr1 substr $str $i 1)+0x30}
+end
+
+m1 $base 0xd
+m1 $base 0xa
+letl baud {$baud+1}
+end
+ret
+
+
+
+function program_local
+setconfig putelf.uncached 0
+put ${1:/tmp/gzrom.bin} 0x81000000
+callbin bin/sst.bin iep 0xbfc00000 0 $filesize 0x1000 0x81000000 0 $filesize
+
+ret
+
+
+function program_local1
+
+setconfig putelf.uncached 0
+
+letl file ${1:/tmp/gzrom.bin}
+letl filesize $(test -s $file)
+map $file 0xff240000
+callbin bin/sst.bin iep 0xbfc00000 0 $filesize 0x1000 0xff240000 0 $filesize
+
+ret
+
+function program_local2
+setconfig putelf.uncached 0
+setconfig callbin.stacksize 0x800
+put ${1:/tmp/gzrom.bin} 0xb0003000
+callbin bin/sst.bin iep 0xbfc00000 0 $filesize 0x1000 0xb0003000 0 $filesize
+
+ret
+
+function program_spi
+setconfig putelf.uncached 0
+setconfig callbin.stacksize 0x800
+put ${1:/tmp/gzrom.bin} 0xb0003000
+
+setconfig flash.type byte
+erase
+msleep 1000
+program 0xb0003000 0 $filesize
+
+ret
+
+function cache_init1
+call cache_config
+call cache_init
+setconfig helpaddr 0x90000000
+ret
+
+
+function test_ohci
+letl d $(d4q 0xbfd00424 1)
+m4 0xbfd00424 {$d&~0x80000000}
+m4 0xbfe08004 0x80
+m4 0xbfe08048 0x200
+d4 0xbfe08000 40
+ret
+
+function test_ehci
+letl d $(d4q 0xbfd00424 1)
+m4 0xbfd00424 {$d&~0x80000000}
+m4 0xbfe00010 2
+m4 0xbfe00054 0x1000
+m4 0xbfe00010 1
+m4 0xbfe00050 1
+d4 0xbfe00000 40
+ret
+
+function test_sdio
+m4 0xbfd010d0 0xc90;m4 0xbfd010f0 0x410;
+ret
+
+function test_rport
+m4 0xbfd010d0 {$(d4q 0xbfd010d0 1)|0x400}
+m4 0xbfd010f0 {$(d4q 0xbfd010d0 1)&~0x400}
+m4 0xb08000a8 0x100
+m4 0xb08000a4 3
+echo_off
+loop -1 d4q 0xb08000a0 4
+ret
+
+function test_spi2
+m4 0xbfd010d0 0xc90;
+m4 0xbfd010f0 0x400;
+scallbin bin/spi_n25q128_zx400.bin 0 0xa1000000 0x1000 0xbfe5c000 i
+ret
+
+
+function test_spi2_dma
+m4 0xbfd010d0 0xc90;
+m4 0xbfd010f0 0x400;
+letl d 4
+
+let b 0xbfe5c000
+m1 {$b+0x1} 0xc0
+m1 {$b+0x3} {(0x5&~3)|(($d>>2)&3)}
+m1 {$b+0x0} {(0x51&~3)|($d&3)}
+letl cmd {$b+4}
+
+#            order saddr        daddr    length step_length step_times cmd
+m4 0xa000e000 0    0x01000000 0x1fe5c008 0x1000   0           1        0x1001
+m4 $cmd {(0x4000<<8)|0x73}
+m4 0xbfd01160 {0xe000|0x8|0x1}
+loop 10 d4q {$b+0xc} 1
+m4 0xbfd01160 {0x4000|4|1}
+d4 0xa0004000 7
+
+ret
+
+function test_fifo
+m4 0xb0800080 0xff
+msleep 1
+#fifo channel
+m4 0xb0800084 0
+#               source     dest        rcnt     wcnt
+m4 0xb0800040   0x01000000 0x02000000  0x100    0x100
+m4 0xb0800050   0x11
+msleep 1
+d4 0xb0800040 6
+d4 0xa2000000 10
+ret
+
+function test_asip
+m4 0xbfd00424 {$(d4q 0xbfd00424 1)|0x40000000}
+asip set
+ret
+
+letl i2creg 0xbfe58000;
+
+function i2c0_init
+ let i2creg 0xbfe58000;
+ m1 $(expr $i2creg+0x2) 0x0;
+ m1 $(expr $i2creg+0x0) 0x2c;
+ m1 $(expr $i2creg+0x1) 0x03;
+ m1 $(expr $i2creg+0x2) 0x80;
+ret
+
+function i2c0_read
+letl cr dr adr reg count $(expr $i2creg+0x4) $(expr $i2creg+0x3) "$1" "$2" $(expr ($#>3)*($3-1)+1)
+do while $(expr $count>0)
+ m1 $dr $adr;
+ m1 $cr 0x90; 
+ while $(expr $(d1q  $cr 1)&0x2); 
+
+ m1 $dr $reg;
+ m1 $cr 0x10;
+ while $(expr $(d1q  $cr 1)&0x2); 
+
+ m1 $dr $(expr $adr|0x1)
+
+ m1 $cr 0x90;
+ while $(expr $(d1q  $cr 1)&0x2); 
+
+ m1 $cr 0x28;
+ while $(expr $(d1q  $cr 1)&0x2); 
+ 
+ echo_n $(d1q $dr 1) " "
+ 
+ m1 $cr 0x40;
+ while $(expr $(d1q  $cr 1)&0x40); 
+ letl reg count $(expr $reg+1) $(expr $count-1)
+end
+echo
+
+ret
+
+source scripts/i2c.cmd
+source scripts/spi.cmd
+let spibase 0xffffffffbfe80000
+
+function dump_crossbar
+letl i 0
+letl a 0xbfd00000
+do while {$a<0xbfd00040}
+letl ba $(d4q $a 1)
+letl mk $(d4q {$a+0x40} 1)
+letl mp $(d4q {$a+0x80} 1)
+expr "%set_cpu_window(%d, 0x%08x, 0x%08x, 0x%08x);" $i $ba $mk $mp
+letl a {$a+8}
+letl i {$i+1}
+end
+ret
+
+function pllcfg
+
+letl APB_CLK 33333333
+letl PLLCFG_BASE 0xb08000c0
+letl PLLCFG_OFFS 0
+letl PLLSEL_OFFS 4
+letl PLLDIV_OFFS 8
+
+
+letl PLL0_MULT  0x18
+letl PLL0_DIV   1
+letl PLL1_MULT  0x24
+letl PLL1_DIV   2
+letl PLL0_FREQ  {$PLL0_MULT*$APB_CLK/$PLL0_DIV+100}
+letl DDR_FREQ 200000000
+letl CPU_FREQ 400000000
+letl AXI_FREQ 100000000
+letl CPU2_FREQ 200000000
+letl DDR_DIV  {$PLL0_FREQ/$DDR_FREQ}
+letl CPU_DIV  {$PLL0_FREQ/$CPU_FREQ}
+letl AXI_DIV  {$PLL0_FREQ/$AXI_FREQ}
+letl CPU2_DIV  {$PLL0_FREQ/$CPU2_FREQ}
+        
+m4 {$PLLCFG_OFFS+$PLLCFG_BASE} {($PLL0_MULT<<0)|($PLL0_DIV<<8)|($PLL1_MULT<<16)|($PLL1_DIV<<24)}
+while {($(d4q {$PLLCFG_OFFS+$PLLCFG_BASE} 1)&((1<<15)|(1<<31)))!=((1<<15)|(1<<31))}
+m4 {$PLLDIV_OFFS+$PLLCFG_BASE} {($CPU2_DIV<<12)|($DDR_DIV<<8)|($CPU_DIV<<0)|($AXI_DIV<<4)|0x66400000}
+m4 {$PLLSEL_OFFS+$PLLCFG_BASE} 0xff00
+
+ret
+
+
+
+
+
+echo ls1g+ flash program demo
+#maybe need set flash width and speed
+#waitreg 1 0x5a5a5a5a
+#waitfacc
+setconfig helpaddr 0xffffffffb0000000
+echo use call configddr to init ddr
+echo use call program_sram to program
+
+
